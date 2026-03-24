@@ -32,6 +32,7 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
 .node-nav{position:fixed;left:1.4rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:300;}
 .nn-dot{width:10px;height:10px;border-radius:50%;border:1px solid var(--mute);background:var(--line);cursor:pointer;transition:all .2s;position:relative;}
 .nn-dot.active{transform:scale(1.45);}
+.nn-dot[data-node="ctx"]{border-color:var(--teal);}  .nn-dot[data-node="ctx"].active{background:var(--teal);}
 .nn-dot[data-node="0"]{border-color:var(--gold);}   .nn-dot[data-node="0"].active{background:var(--gold);}
 .nn-dot[data-node="1"]{border-color:var(--c1);}     .nn-dot[data-node="1"].active{background:var(--c1);}
 .nn-dot[data-node="2"]{border-color:var(--c2);}     .nn-dot[data-node="2"].active{background:var(--c2);}
@@ -50,6 +51,35 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
 .slide[data-node="4"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c4);}
 .slide[data-node="5"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c5);}
 .slide-ind{position:absolute;bottom:1.5rem;right:2rem;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--mute);}
+
+/* ══ CONTEXT SLIDE (Vincent's doc) ══ */
+.slide-context{background:var(--black);}
+.slide-context::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 15% 60%,rgba(42,107,107,.06) 0%,transparent 60%),repeating-linear-gradient(90deg,transparent 79px,rgba(255,255,255,.01) 79px,rgba(255,255,255,.01) 80px),repeating-linear-gradient(0deg,transparent 79px,rgba(255,255,255,.01) 79px,rgba(255,255,255,.01) 80px);pointer-events:none;}
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.25rem 0;}
+@media(max-width:700px){.ctx-grid{grid-template-columns:1fr;}}
+.ctx-cell{background:var(--dark);padding:1.1rem 1.35rem;transition:background .15s;}
+.ctx-cell:hover{background:var(--mid);}
+.ctx-icon{font-size:1.35rem;margin-bottom:.45rem;}
+.ctx-title{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--teal);margin-bottom:.4rem;}
+.ctx-body{font-size:12px;color:var(--pale);line-height:1.72;font-style:italic;}
+.ctx-body strong{color:var(--white);font-style:normal;}
+.ctx-examples{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:1.25rem 0;}
+@media(max-width:700px){.ctx-examples{grid-template-columns:1fr 1fr;}}
+.ctx-eg{border:1px solid var(--line);border-radius:7px;background:var(--dark);padding:.85rem 1rem;transition:all .18s;}
+.ctx-eg:hover{background:var(--mid);transform:translateY(-2px);}
+.ctx-eg-flag{font-size:1.2rem;margin-bottom:.35rem;}
+.ctx-eg-name{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--pale);margin-bottom:.25rem;}
+.ctx-eg-desc{font-size:11px;color:var(--mute);font-style:italic;line-height:1.5;}
+.ctx-roadmap{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.25rem 0;}
+.ctx-rm-head{background:var(--dark);padding:.75rem 1.4rem;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--teal);}
+.ctx-rm-steps{background:var(--off);padding:.5rem 0;}
+.ctx-rm-step{display:flex;align-items:flex-start;gap:1rem;padding:.75rem 1.4rem .75rem 2.2rem;border-bottom:1px solid var(--line);position:relative;}
+.ctx-rm-step:last-child{border-bottom:none;}
+.ctx-rm-dot{width:10px;height:10px;border-radius:50%;position:absolute;left:1rem;top:14px;flex-shrink:0;}
+.ctx-rm-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--mute);margin-bottom:2px;}
+.ctx-rm-title{font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px;}
+.ctx-rm-desc{font-size:11px;color:var(--pale);line-height:1.6;font-style:italic;}
+.teal-pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px 4px 8px;border-radius:20px;border:1px solid rgba(42,107,107,.45);background:rgba(42,107,107,.07);color:var(--teal);margin-bottom:1.2rem;}
 
 /* ══ TITLE ══ */
 .slide-title::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 85% 50%,rgba(139,92,246,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 80% at 10% 50%,rgba(201,168,76,.03) 0%,transparent 60%),repeating-linear-gradient(90deg,transparent 79px,rgba(255,255,255,.012) 79px,rgba(255,255,255,.012) 80px),repeating-linear-gradient(0deg,transparent 79px,rgba(255,255,255,.012) 79px,rgba(255,255,255,.012) 80px);pointer-events:none;}
@@ -251,13 +281,83 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
 <div class="spine"><div class="spine-fill" id="spineFill"></div></div>
 
 <nav class="node-nav">
-  <div class="nn-dot" data-node="0" onclick="goTo('s0')"><span class="nn-tip">Title</span></div>
+  <div class="nn-dot" data-node="ctx" onclick="goTo('sctx')"><span class="nn-tip">The Case · Vincent</span></div>
+  <div class="nn-dot" data-node="0" onclick="goTo('s0')"><span class="nn-tip">The Invariant</span></div>
   <div class="nn-dot" data-node="1" onclick="goTo('s1')"><span class="nn-tip">① Tensor · The Map</span></div>
   <div class="nn-dot" data-node="2" onclick="goTo('s2')"><span class="nn-tip">② Compressor</span></div>
   <div class="nn-dot" data-node="3" onclick="goTo('s3')"><span class="nn-tip">③ Vector</span></div>
   <div class="nn-dot" data-node="4" onclick="goTo('s4')"><span class="nn-tip">④ Eigenstructure</span></div>
   <div class="nn-dot" data-node="5" onclick="goTo('s5')"><span class="nn-tip">⑤ Scalar</span></div>
 </nav>
+
+<!-- ═══════════════════ SLIDE CTX · VINCENT'S CASE ═══════════════════ -->
+<section class="slide slide-context" id="sctx" data-node="ctx">
+  <div class="teal-pill"><span>◎</span> Context · Vincent Mangeni · Manager ICT · NPA</div>
+  <div class="slide-num">What is a national digital twin — and why Uganda, why now</div>
+  <h2>A living simulation<br><em style="color:var(--teal)">of an entire country.</em></h2>
+  <p class="lead">A digital twin for a National Planning Authority is a dynamic virtual replica of national systems — integrating real-time data, satellite feeds, economic indicators, and population dynamics into a single environment for testing policies before real-world implementation.</p>
+
+  <div class="ctx-grid">
+    <div class="ctx-cell">
+      <div class="ctx-icon">🗺️</div>
+      <div class="ctx-title">Static elements</div>
+      <div class="ctx-body">High-resolution 3D representations of terrain, buildings, roads, utilities, forests, and land use. <strong>The skeleton of Uganda, made computable.</strong></div>
+    </div>
+    <div class="ctx-cell">
+      <div class="ctx-icon">⚡</div>
+      <div class="ctx-title">Dynamic elements</div>
+      <div class="ctx-body">Real-time data feeds — traffic, weather, energy, economic activity — plus predictive modelling using AI and simulation algorithms. <strong>The living layer on top.</strong></div>
+    </div>
+    <div class="ctx-cell">
+      <div class="ctx-icon">🔀</div>
+      <div class="ctx-title">What-if scenario testing</div>
+      <div class="ctx-body">Simulate outcomes of new highways, urban expansion, or policy changes <strong>before committing budget.</strong> See the consequence before the contract.</div>
+    </div>
+    <div class="ctx-cell">
+      <div class="ctx-icon">🤝</div>
+      <div class="ctx-title">Stakeholder collaboration</div>
+      <div class="ctx-body">Share visualisations with ministries, local governments, investors, and citizens. <strong>Transparent planning replaces opaque reporting.</strong> The map is the meeting.</div>
+    </div>
+    <div class="ctx-cell">
+      <div class="ctx-icon">🔗</div>
+      <div class="ctx-title">Cross-sector integration</div>
+      <div class="ctx-body">Link transportation, agriculture, water, urban development, and disaster management <strong>in one platform.</strong> Siloed ministries see each other's data.</div>
+    </div>
+    <div class="ctx-cell">
+      <div class="ctx-icon">🌱</div>
+      <div class="ctx-title">Sustainability &amp; resilience</div>
+      <div class="ctx-body">Model climate change effects and inclusive growth to align with <strong>Uganda's Vision 2040 and NDPIV</strong> — not just today's budget cycle.</div>
+    </div>
+  </div>
+
+  <p style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--mute);margin-bottom:.65rem;">Global pioneers — models adaptable to Uganda's context</p>
+  <div class="ctx-examples">
+    <div class="ctx-eg"><div class="ctx-eg-flag">🇸🇬</div><div class="ctx-eg-name">Virtual Singapore</div><div class="ctx-eg-desc">The world's first national digital twin. Full 3D replica, real-time data, subsurface elements. Traffic, disaster, infrastructure — unified.</div></div>
+    <div class="ctx-eg"><div class="ctx-eg-flag">🇬🇧</div><div class="ctx-eg-name">UK National Twin</div><div class="ctx-eg-desc">Federated system connecting sector twins — energy, transport, built environment. Interoperability as the model.</div></div>
+    <div class="ctx-eg"><div class="ctx-eg-flag">🇮🇳</div><div class="ctx-eg-name">India Sangam</div><div class="ctx-eg-desc">Full life-cycle planning with BIM integration. Emerging market proof that scale is not a barrier.</div></div>
+    <div class="ctx-eg"><div class="ctx-eg-flag">🇦🇺</div><div class="ctx-eg-name">Australia NSW</div><div class="ctx-eg-desc">National and state-scale twins for predictive governance. Starting with priority sectors and scaling up is the proven path.</div></div>
+    <div class="ctx-eg"><div class="ctx-eg-flag">🇶🇦</div><div class="ctx-eg-name">Qatar</div><div class="ctx-eg-desc">City-scale twin for infrastructure and citizen services. Resource-constrained starts can reach continental influence.</div></div>
+    <div class="ctx-eg"><div class="ctx-eg-flag">🇺🇬</div><div class="ctx-eg-name">Uganda · Now</div><div class="ctx-eg-desc">Digital Uganda Vision, NDPIII Digital Transformation, NITA-U, GIS capabilities. <strong>The foundations are already here.</strong></div></div>
+  </div>
+
+  <div class="ctx-roadmap">
+    <div class="ctx-rm-head">NPA implementation roadmap — phased approach</div>
+    <div class="ctx-rm-steps">
+      <div class="ctx-rm-step"><div class="ctx-rm-dot" style="background:var(--c5)"></div><div><div class="ctx-rm-label">Phase 1 · Now</div><div class="ctx-rm-title">Define scope, governance &amp; data foundation</div><div class="ctx-rm-desc">Pilot in Greater Kampala or key corridors. Integrate satellite imagery, NBI, census, land registries. Inter-ministerial data-sharing policies established.</div></div></div>
+      <div class="ctx-rm-step"><div class="ctx-rm-dot" style="background:var(--orange)"></div><div><div class="ctx-rm-label">Phase 2 · 2026–2028</div><div class="ctx-rm-title">Real-time monitoring · static model live</div><div class="ctx-rm-desc">GIS platform active, 3D base layer, dynamic data feeds. District officers submit via API tokens. The map recolours live before the meeting ends.</div></div></div>
+      <div class="ctx-rm-step"><div class="ctx-rm-dot" style="background:var(--yellow)"></div><div><div class="ctx-rm-label">Phase 3 · 2028–2035</div><div class="ctx-rm-title">Full predictive "what-if" capabilities</div><div class="ctx-rm-desc">AI-driven scenario modelling. Parish Development Model impacts simulated. Agriculture–transport integration. Disaster resilience. Sub-county granularity.</div></div></div>
+      <div class="ctx-rm-step"><div class="ctx-rm-dot" style="background:var(--lgreen)"></div><div><div class="ctx-rm-label">Phase 4 · 2035–2040</div><div class="ctx-rm-title">NDPIV targets live · Vision 2040 scalar visible daily</div><div class="ctx-rm-desc">The national performance index is a number every Minister sees in real time. Certificate of Compliance computed dynamically. The scalar belongs to Government.</div></div></div>
+      <div class="ctx-rm-step"><div class="ctx-rm-dot" style="background:var(--teal)"></div><div><div class="ctx-rm-label">Phase 5 · 2040–2075</div><div class="ctx-rm-title">East Africa · Uganda as the continental model</div><div class="ctx-rm-desc">Uganda proves the architecture. NPA expands the tensor to Kenya, Tanzania, Rwanda. <strong>Singapore transformed planning from resource-constrained to world-leading. Uganda follows the same path.</strong></div></div></div>
+    </div>
+  </div>
+
+  <div class="pullquote">
+    Singapore transformed from resource-constrained to highly efficient planners using exactly this approach.<br>
+    <em>Uganda follows a similar path — scaled to its context, owned by its Government.</em>
+    <cite>— Vincent Mangeni · Manager ICT · National Planning Authority</cite>
+  </div>
+  <div class="slide-ind">Context · 00</div>
+</section>
 
 <!-- ═══════════════════ TITLE ═══════════════════ -->
 <section class="slide slide-title" id="s0" data-node="0">
@@ -300,7 +400,7 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   <div class="title-meta">
     <div class="meta-item">System by<span>Ukubona LLC</span></div>
     <div class="meta-item">Client<span>National Planning Authority · Uganda</span></div>
-    <div class="meta-item">Built with<span>Vincent Mangeni · Chief ICT</span></div>
+    <div class="meta-item">Built with<span>Vincent Mangeni · Manager ICT</span></div>
     <div class="meta-item">Horizon<span>Vision 2040 · NDPIV · PIAP</span></div>
   </div>
   <div class="slide-ind">00</div>
@@ -899,7 +999,7 @@ window.addEventListener('scroll', function() {
   const h = document.documentElement.scrollHeight - window.innerHeight;
   const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
   document.getElementById('spineFill').style.height = pct+'%';
-  document.querySelectorAll('.slide[data-node]').forEach(function(s) {
+  document.querySelectorAll('.slide[data-node]').forEach(function(s) {  // includes ctx
     const rect = s.getBoundingClientRect();
     if(rect.top <= window.innerHeight*0.5 && rect.bottom >= window.innerHeight*0.5) {
       const n = s.getAttribute('data-node');
