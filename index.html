@@ -1,96 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Invariant · Uganda Digital Twin · npa-04 · Ukubona LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital@0;1&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital@0;1&family=Source+Code+Pro:wght@400;600&display=swap');
-
 :root {
-  --black:  #080808;
-  --off:    #111210;
-  --dark:   #1a1c18;
-  --mid:    #2e3028;
-  --line:   #3a3d32;
-  --mute:   #6b7060;
-  --pale:   #b8bfaa;
-  --white:  #f5f3ee;
-  --gold:   #c9a84c;
-  --gold2:  #e8c96b;
-  --red:    #c93b2a;
-  --orange: #d4622a;
-  --yellow: #c9a22a;
-  --lgreen: #5a8c3a;
-  --green:  #2a6b3a;
-  --teal:   #2a6b6b;
-  --blue:   #2a4a8c;
-  --serif:  'Playfair Display', Georgia, serif;
-  --body:   'Libre Baskerville', Georgia, serif;
-  --mono:   'Source Code Pro', monospace;
-
-  /* NODE COLORS — one per layer */
-  --c1: #8b5cf6;   /* Tensor     — violet */
-  --c2: #c9a84c;   /* Compressor — gold   */
-  --c3: #3b82f6;   /* Vector     — blue   */
-  --c4: #10b981;   /* Eigen      — emerald*/
-  --c5: #ef4444;   /* Scalar     — red    */
+  --black:#080808; --off:#111210; --dark:#1a1c18; --mid:#2e3028;
+  --line:#3a3d32; --mute:#6b7060; --pale:#b8bfaa; --white:#f5f3ee;
+  --gold:#c9a84c; --gold2:#e8c96b; --red:#c93b2a; --orange:#d4622a;
+  --yellow:#c9a22a; --lgreen:#5a8c3a; --green:#2a6b3a; --teal:#2a6b6b; --blue:#2a4a8c;
+  --serif:'Playfair Display',Georgia,serif;
+  --body:'Libre Baskerville',Georgia,serif;
+  --mono:'Source Code Pro',monospace;
+  --c1:#8b5cf6; --c2:#c9a84c; --c3:#3b82f6; --c4:#10b981; --c5:#ef4444;
+  /* map colours */
+  --r:#e24b4a; --o:#d85a30; --y2:#ef9f27; --g:#639922; --b2:#378add; --i:#534ab7; --v:#1d9e75;
 }
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:var(--body);background:var(--black);color:var(--white);line-height:1.65;overflow-x:hidden;}
 
-/* ══ SPINE NAV ══ */
-.spine{position:fixed;left:0;top:0;bottom:0;width:3px;z-index:200;background:var(--line);}
-.spine-fill{position:absolute;top:0;left:0;width:100%;background:var(--gold);transition:height .4s ease;height:0%;}
-.node-nav{position:fixed;left:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:16px;z-index:200;}
-.nn-dot{width:10px;height:10px;border-radius:50%;border:1px solid var(--mute);background:var(--line);cursor:pointer;transition:all .25s;position:relative;}
-.nn-dot.active{transform:scale(1.4);}
-.nn-dot[data-node="1"]{border-color:var(--c1);}
-.nn-dot[data-node="1"].active{background:var(--c1);}
-.nn-dot[data-node="2"]{border-color:var(--c2);}
-.nn-dot[data-node="2"].active{background:var(--c2);}
-.nn-dot[data-node="3"]{border-color:var(--c3);}
-.nn-dot[data-node="3"].active{background:var(--c3);}
-.nn-dot[data-node="4"]{border-color:var(--c4);}
-.nn-dot[data-node="4"].active{background:var(--c4);}
-.nn-dot[data-node="5"]{border-color:var(--c5);}
-.nn-dot[data-node="5"].active{background:var(--c5);}
-.nn-tip{position:absolute;left:18px;top:50%;transform:translateY(-50%);background:var(--dark);border:1px solid var(--line);border-radius:4px;padding:3px 8px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--pale);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+/* ══ SPINE ══ */
+.spine{position:fixed;left:0;top:0;bottom:0;width:3px;z-index:300;background:var(--line);}
+.spine-fill{position:absolute;top:0;left:0;width:100%;background:var(--gold);transition:height .35s ease;}
+
+/* ══ NODE NAV ══ */
+.node-nav{position:fixed;left:1.4rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:300;}
+.nn-dot{width:10px;height:10px;border-radius:50%;border:1px solid var(--mute);background:var(--line);cursor:pointer;transition:all .2s;position:relative;}
+.nn-dot.active{transform:scale(1.45);}
+.nn-dot[data-node="0"]{border-color:var(--gold);}   .nn-dot[data-node="0"].active{background:var(--gold);}
+.nn-dot[data-node="1"]{border-color:var(--c1);}     .nn-dot[data-node="1"].active{background:var(--c1);}
+.nn-dot[data-node="2"]{border-color:var(--c2);}     .nn-dot[data-node="2"].active{background:var(--c2);}
+.nn-dot[data-node="3"]{border-color:var(--c3);}     .nn-dot[data-node="3"].active{background:var(--c3);}
+.nn-dot[data-node="4"]{border-color:var(--c4);}     .nn-dot[data-node="4"].active{background:var(--c4);}
+.nn-dot[data-node="5"]{border-color:var(--c5);}     .nn-dot[data-node="5"].active{background:var(--c5);}
+.nn-tip{position:absolute;left:18px;top:50%;transform:translateY(-50%);background:var(--dark);border:1px solid var(--line);border-radius:4px;padding:3px 8px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--pale);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s;}
 .nn-dot:hover .nn-tip{opacity:1;}
-@media(max-width:600px){.node-nav{display:none;}.spine{display:none;}}
+@media(max-width:600px){.node-nav,.spine{display:none;}}
 
 /* ══ SLIDE BASE ══ */
 .slide{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:5vw 8vw 5vw 10vw;position:relative;border-bottom:1px solid var(--line);}
+.slide[data-node="1"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c1);}
+.slide[data-node="2"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c2);}
+.slide[data-node="3"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c3);}
+.slide[data-node="4"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c4);}
+.slide[data-node="5"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c5);}
 .slide-ind{position:absolute;bottom:1.5rem;right:2rem;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--mute);}
 
-/* ══ TITLE SLIDE ══ */
-.slide-title{background:var(--black);}
-.slide-title::before{content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 70% 50% at 85% 50%, rgba(139,92,246,.04) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 80% at 10% 50%, rgba(201,168,76,.03) 0%, transparent 60%),
-    repeating-linear-gradient(90deg,transparent 79px,rgba(255,255,255,.012) 79px,rgba(255,255,255,.012) 80px),
-    repeating-linear-gradient(0deg,transparent 79px,rgba(255,255,255,.012) 79px,rgba(255,255,255,.012) 80px);
-  pointer-events:none;}
+/* ══ TITLE ══ */
+.slide-title::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 85% 50%,rgba(139,92,246,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 80% at 10% 50%,rgba(201,168,76,.03) 0%,transparent 60%),repeating-linear-gradient(90deg,transparent 79px,rgba(255,255,255,.012) 79px,rgba(255,255,255,.012) 80px),repeating-linear-gradient(0deg,transparent 79px,rgba(255,255,255,.012) 79px,rgba(255,255,255,.012) 80px);pointer-events:none;}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;opacity:.8;}
 .slide-title h1{font-family:var(--serif);font-size:clamp(3rem,7vw,6rem);font-weight:400;line-height:1.02;color:var(--white);margin-bottom:.6rem;}
 .slide-title h1 em{font-style:italic;color:var(--gold2);}
-.tagline{font-family:var(--body);font-size:clamp(1rem,2.2vw,1.2rem);font-style:italic;color:var(--pale);margin-bottom:3rem;max-width:54ch;line-height:1.7;}
+.tagline{font-family:var(--body);font-size:clamp(1rem,2.2vw,1.2rem);font-style:italic;color:var(--pale);margin-bottom:2.5rem;max-width:54ch;line-height:1.7;}
 .title-meta{display:flex;gap:2rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.5rem;}
 .meta-item{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);}
 .meta-item span{color:var(--pale);display:block;margin-top:3px;font-size:12px;}
 
-/* ══ INVARIANT CHAIN (title) ══ */
-.chain{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:2.5rem 0 3rem;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+/* ══ CHAIN ══ */
+.chain{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:2rem 0 2.5rem;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
 .chain-node{flex:1;min-width:80px;padding:.9rem .75rem;text-align:center;border-right:1px solid var(--line);background:var(--dark);cursor:pointer;transition:background .2s;}
 .chain-node:last-child{border-right:none;}
-.chain-node:hover{background:var(--mid);}
-.chain-node.active{background:var(--mid);}
+.chain-node:hover,.chain-node.active{background:var(--mid);}
 .cn-num{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;margin-bottom:4px;}
-.cn-name{font-family:var(--serif);font-size:clamp(.9rem,1.8vw,1.15rem);font-style:italic;line-height:1.2;}
-.cn-sub{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--mute);margin-top:3px;}
+.cn-name{font-family:var(--serif);font-size:clamp(.85rem,1.6vw,1.1rem);font-style:italic;line-height:1.2;}
+.cn-sub{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin-top:3px;}
 .chain-node[data-n="1"] .cn-name{color:var(--c1);}
 .chain-node[data-n="2"] .cn-name{color:var(--c2);}
 .chain-node[data-n="3"] .cn-name{color:var(--c3);}
@@ -98,169 +76,195 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
 .chain-node[data-n="5"] .cn-name{color:var(--c5);}
 .chain-arrow{font-size:.9rem;color:var(--mute);padding:0 2px;flex-shrink:0;align-self:center;}
 
-/* ══ SECTION HEADER ══ */
-.slide-num{font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--mute);text-transform:uppercase;margin-bottom:.75rem;}
-.node-pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px 4px 8px;border-radius:20px;border:1px solid;margin-bottom:1.25rem;}
-.slide h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,3rem);font-weight:400;line-height:1.12;color:var(--white);margin-bottom:.75rem;}
+/* ══ SECTION TYPOGRAPHY ══ */
+.node-pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px 4px 8px;border-radius:20px;border:1px solid;margin-bottom:1.2rem;}
+.slide-num{font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--mute);text-transform:uppercase;margin-bottom:.7rem;}
+.slide h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,3rem);font-weight:400;line-height:1.12;color:var(--white);margin-bottom:.7rem;}
 .slide h2 em{font-style:italic;}
-.lead{font-size:clamp(.95rem,1.8vw,1.1rem);color:var(--pale);max-width:64ch;margin-bottom:2rem;line-height:1.85;font-style:italic;}
+.lead{font-size:clamp(.95rem,1.8vw,1.05rem);color:var(--pale);max-width:64ch;margin-bottom:1.75rem;line-height:1.85;font-style:italic;}
 
-/* ══ NODE ACCENT LINES ══ */
-.slide[data-node="1"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c1);}
-.slide[data-node="2"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c2);}
-.slide[data-node="3"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c3);}
-.slide[data-node="4"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c4);}
-.slide[data-node="5"]::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c5);}
+/* ══ MAP SECTION — full twin ══ */
+.map-shell{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.25rem 0;}
+.map-bar{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.2rem;background:var(--dark);border-bottom:1px solid var(--line);gap:.75rem;flex-wrap:wrap;}
+.map-dots{display:flex;gap:5px;}
+.map-dots span{width:9px;height:9px;border-radius:50%;}
+.map-dots span:nth-child(1){background:#c04040;}
+.map-dots span:nth-child(2){background:#c09040;}
+.map-dots span:nth-child(3){background:#40a040;}
+.map-url{font-family:var(--mono);font-size:10px;color:var(--mute);}
+.map-tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);padding:2px 8px;border-radius:3px;}
 
-/* ══ TENSOR SLIDE ══ */
-.tensor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:1.5rem 0;}
-@media(max-width:700px){.tensor-grid{grid-template-columns:1fr 1fr;}}
-.tg-cell{border:1px solid var(--line);border-radius:8px;background:var(--dark);padding:1.1rem 1rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.tg-cell::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line);transition:background .2s;}
-.tg-cell:hover{background:var(--mid);transform:translateY(-2px);}
-.tg-cell.selected{background:var(--mid);border-color:var(--c1);}
-.tg-cell.selected::before{background:var(--c1);}
-.tg-prog{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:5px;}
-.tg-name{font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;line-height:1.3;}
-.tg-indicators{font-size:11px;color:var(--mute);font-style:italic;line-height:1.5;}
-.tg-dim{font-family:var(--mono);font-size:9px;color:var(--c1);margin-top:6px;opacity:.7;}
+/* TENSOR DROPDOWN BAR */
+.tensor-controls{background:var(--off);border-bottom:1px solid var(--line);padding:.85rem 1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.tc-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute);flex-shrink:0;}
+.tc-select{font-family:var(--mono);font-size:11px;background:var(--dark);color:var(--c1);border:1px solid rgba(139,92,246,.45);border-radius:5px;padding:.38rem 30px .38rem .7rem;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b5cf6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;min-width:300px;transition:border-color .15s;}
+.tc-select:hover,.tc-select:focus{border-color:var(--c1);}
+.tc-dim{font-family:var(--mono);font-size:10px;color:var(--mute);flex-shrink:0;}
+.tc-dim select{font-family:var(--mono);font-size:10px;background:var(--dark);color:var(--pale);border:1px solid var(--line);border-radius:4px;padding:.3rem .5rem;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7060'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;}
+.tc-shape{font-family:var(--mono);font-size:9px;color:var(--c1);opacity:.75;margin-left:auto;}
 
-.tensor-insight{border:1px solid var(--line);border-left:3px solid var(--c1);border-radius:0 8px 8px 0;background:var(--dark);padding:1.25rem 1.5rem;margin:1.5rem 0;}
-.ti-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--c1);margin-bottom:.5rem;}
+/* MAP + SIDE PANEL */
+.map-body{display:flex;min-height:0;}
+.map-container{flex:1;position:relative;min-width:0;}
+#leafmap{width:100%;height:450px;}
+.leaflet-tile-pane{filter:brightness(.82) saturate(.85);}
+
+/* MAP SIDE */
+.map-side{width:220px;flex-shrink:0;background:var(--off);border-left:1px solid var(--line);overflow-y:auto;padding:.85rem;}
+.ms-section{margin-bottom:1rem;}
+.ms-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:var(--mute);padding-bottom:.3rem;border-bottom:1px solid var(--line);margin-bottom:.6rem;}
+.ms-stat{background:var(--dark);border-radius:5px;padding:.55rem .7rem;margin-bottom:.4rem;}
+.ms-stat-n{font-family:var(--serif);font-size:1.6rem;line-height:1;margin-bottom:.15rem;}
+.ms-stat-lbl{font-family:var(--mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mute);}
+
+/* WEIGHT SLIDERS in side */
+.w-sl-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;}
+.w-sl-name{font-size:.65rem;color:var(--pale);flex:1;line-height:1.2;}
+.w-sl{flex:1;height:3px;appearance:none;-webkit-appearance:none;background:var(--line);border-radius:2px;outline:none;cursor:pointer;min-width:50px;}
+.w-sl::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--c2);cursor:pointer;}
+.w-sl-val{font-family:var(--mono);font-size:.6rem;color:var(--c2);width:28px;text-align:right;flex-shrink:0;}
+
+.top-districts{display:flex;flex-direction:column;gap:.25rem;}
+.td-item{display:flex;align-items:center;gap:.45rem;padding:.28rem .4rem;border-radius:3px;cursor:pointer;transition:background .1s;font-size:.67rem;}
+.td-item:hover{background:var(--dark);}
+.td-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.td-name{flex:1;color:var(--pale);}
+.td-val{font-family:var(--mono);font-size:.6rem;color:var(--mute);}
+
+/* LEGEND */
+.map-legend{position:absolute;bottom:12px;left:12px;z-index:800;background:rgba(20,20,18,.88);border:1px solid var(--line);border-radius:6px;padding:.45rem .6rem;pointer-events:none;}
+.leg-title{font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:.3rem;}
+.leg-scale{display:flex;gap:2px;margin-bottom:.2rem;}
+.leg-sw{height:7px;border-radius:1px;flex:1;}
+.leg-labs{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.48rem;color:var(--mute);}
+
+/* MAP POPUP */
+.leaflet-popup-content-wrapper{background:var(--dark)!important;color:var(--white)!important;border:1px solid var(--line)!important;border-radius:8px!important;box-shadow:0 8px 32px rgba(0,0,0,.6)!important;}
+.leaflet-popup-content{margin:.7rem!important;font-family:'Source Code Pro',monospace!important;}
+.leaflet-popup-tip{background:var(--dark)!important;}
+.lp-name{font-family:'Playfair Display',serif;font-size:.95rem;margin-bottom:.3rem;}
+.lp-val{font-size:1.2rem;font-weight:600;margin-bottom:.3rem;}
+.lp-rows{display:flex;flex-direction:column;gap:.1rem;}
+.lp-row{display:flex;justify-content:space-between;font-size:.62rem;color:var(--mute);padding:.08rem 0;border-bottom:1px solid var(--line);}
+.lp-row:last-child{border-bottom:none;}
+.lp-rv{color:var(--pale);}
+
+/* MAP FOOTER */
+.map-foot{background:var(--dark);border-top:1px solid var(--line);padding:.6rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;}
+.mf-note{font-family:var(--mono);font-size:10px;color:var(--mute);font-style:italic;}
+.mf-update{font-family:var(--mono);font-size:9px;color:var(--mute);}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--lgreen);margin-right:4px;animation:pulse2 1.8s infinite;}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ══ TENSOR INSIGHT ══ */
+.tensor-insight{border:1px solid var(--line);border-left:3px solid var(--c1);border-radius:0 8px 8px 0;background:var(--dark);padding:1.1rem 1.4rem;margin:1.25rem 0;}
+.ti-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--c1);margin-bottom:.45rem;}
 .ti-body{font-size:13px;color:var(--pale);line-height:1.75;font-style:italic;}
 .ti-body strong{color:var(--white);font-style:normal;}
 
-/* ══ COMPRESSOR SLIDE ══ */
-.weight-demo{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.5rem 0;}
-.wd-head{background:var(--dark);padding:.85rem 1.5rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;}
+/* ══ COMPRESSOR ══ */
+.weight-demo{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.25rem 0;}
+.wd-head{background:var(--dark);padding:.75rem 1.4rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;}
 .wd-title{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--c2);}
 .wd-sub{font-family:var(--mono);font-size:10px;color:var(--mute);font-style:italic;}
-.wd-body{padding:1.5rem;background:var(--off);display:flex;flex-direction:column;gap:1rem;}
+.wd-body{padding:1.4rem;background:var(--off);display:flex;flex-direction:column;gap:.9rem;}
 .w-row{display:flex;align-items:center;gap:1rem;}
 .w-label{font-size:13px;color:var(--pale);width:200px;flex-shrink:0;line-height:1.3;}
 .w-slider{flex:1;height:4px;appearance:none;-webkit-appearance:none;background:var(--line);border-radius:2px;outline:none;cursor:pointer;}
-.w-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--c2);cursor:pointer;box-shadow:0 0 0 3px rgba(201,168,76,.2);transition:transform .15s;}
+.w-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--c2);cursor:pointer;box-shadow:0 0 0 3px rgba(201,168,76,.2);transition:transform .15s;}
 .w-slider::-webkit-slider-thumb:hover{transform:scale(1.25);}
-.w-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--c2);border:none;cursor:pointer;}
-.w-val{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--c2);width:42px;text-align:right;flex-shrink:0;}
-.wd-foot{padding:1rem 1.5rem;background:var(--dark);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.w-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--c2);width:38px;text-align:right;flex-shrink:0;}
+.wd-foot{padding:.9rem 1.4rem;background:var(--dark);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
 .wd-formula{font-family:var(--mono);font-size:11px;color:var(--mute);font-style:italic;}
 .wd-formula em{color:var(--c2);}
-.wd-result{font-family:var(--serif);font-size:1.4rem;font-style:italic;color:var(--c2);}
+.wd-result{font-family:var(--serif);font-size:1.3rem;font-style:italic;color:var(--c2);}
+.roygbiv{display:flex;gap:3px;margin:1rem 0;border-radius:5px;overflow:hidden;border:1px solid var(--line);}
+.rv-seg{flex:1;height:26px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;letter-spacing:.05em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:600;}
 
-/* ROYGBIV legend */
-.roygbiv{display:flex;gap:4px;margin:1.25rem 0;border-radius:6px;overflow:hidden;border:1px solid var(--line);}
-.rv-seg{flex:1;height:28px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;letter-spacing:.06em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:600;}
-
-/* ══ VECTOR SLIDE ══ */
-.vector-demo{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.5rem 0;}
-.vd-head{background:var(--dark);padding:.85rem 1.5rem;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--c3);}
-.vd-body{padding:1.5rem;background:var(--off);}
-.vd-select-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;}
-.vd-select-label{font-size:13px;color:var(--pale);flex-shrink:0;}
-.vd-select{font-family:var(--mono);font-size:12px;background:var(--dark);color:var(--c3);border:1px solid var(--c3);border-radius:4px;padding:7px 30px 7px 12px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%233b82f6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 10px center;min-width:280px;}
-.vd-map-sim{height:200px;border:1px solid var(--line);border-radius:8px;background:var(--dark);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
-.vd-map-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);position:absolute;top:12px;left:12px;}
-/* Simulated district blobs */
-.district-blob{position:absolute;border-radius:50%;opacity:.75;transition:all .6s ease;}
-.vd-note{font-family:var(--mono);font-size:11px;color:var(--mute);margin-top:.85rem;font-style:italic;}
-.vd-note span{color:var(--c3);}
-
-/* PIAP programmes list */
-.piap-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:1.25rem 0;}
+/* ══ VECTOR ══ */
+.piap-list{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:1.1rem 0;}
 @media(max-width:700px){.piap-list{grid-template-columns:1fr;}}
-.piap-item{border:1px solid var(--line);border-radius:6px;background:var(--dark);padding:.7rem 1rem;font-size:12px;color:var(--pale);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.6rem;}
-.piap-item:hover{background:var(--mid);border-color:var(--c3);}
-.piap-item.active{background:var(--mid);border-color:var(--c3);}
+.piap-item{border:1px solid var(--line);border-radius:5px;background:var(--dark);padding:.6rem .85rem;font-size:12px;color:var(--pale);cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:.5rem;}
+.piap-item:hover,.piap-item.active{background:var(--mid);border-color:var(--c3);}
 .piap-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 
-/* ══ EIGEN SLIDE ══ */
-.eigen-box{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.5rem 0;}
-.eb-head{background:var(--dark);padding:1.25rem 1.75rem;border-bottom:1px solid var(--line);}
-.eb-eyebrow{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:var(--c4);margin-bottom:.5rem;}
-.eb-headline{font-family:var(--serif);font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:400;color:var(--white);line-height:1.25;}
-.eb-headline em{font-style:italic;color:var(--c4);}
-.eigen-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);}
-@media(max-width:600px){.eigen-grid{grid-template-columns:1fr;}}
-.eg-cell{background:var(--off);padding:1.25rem 1.5rem;}
-.eg-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:.5rem;}
-.eg-body{font-size:13px;color:var(--pale);line-height:1.7;font-style:italic;}
-.eg-body strong{color:var(--white);font-style:normal;}
-.eigen-oneliner{background:var(--mid);padding:1.1rem 2rem;border-top:1px solid var(--line);font-family:var(--serif);font-size:clamp(.95rem,2vw,1.25rem);font-style:italic;color:var(--gold2);text-align:center;line-height:1.5;}
-
-/* ══ SCALAR SLIDE ══ */
-.scalar-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;border:1px solid var(--line);border-radius:12px;background:var(--dark);margin:1.5rem 0;text-align:center;position:relative;overflow:hidden;}
-.scalar-hero::before{content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(239,68,68,.06) 0%,transparent 70%);
-  pointer-events:none;}
-.sh-eyebrow{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--mute);margin-bottom:1rem;}
-.sh-number{font-family:var(--serif);font-size:clamp(4rem,12vw,9rem);line-height:1;color:var(--c5);margin-bottom:.5rem;transition:all .5s ease;}
-.sh-unit{font-family:var(--mono);font-size:14px;text-transform:uppercase;letter-spacing:.2em;color:var(--mute);margin-bottom:1.5rem;}
-.sh-label{font-family:var(--body);font-size:clamp(.95rem,2vw,1.1rem);font-style:italic;color:var(--pale);max-width:44ch;line-height:1.7;}
-.sh-pulse{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 0 rgba(239,68,68,.3);animation:scalar-pulse 3s infinite;}
-@keyframes scalar-pulse{0%,100%{box-shadow:inset 0 0 0 0 rgba(239,68,68,.0);}50%{box-shadow:inset 0 0 0 3px rgba(239,68,68,.18);}}
-
-.scalar-explain{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:1.5rem 0;}
-@media(max-width:600px){.scalar-explain{grid-template-columns:1fr;}}
-.se-cell{background:var(--off);padding:1.1rem 1.4rem;}
-.se-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:var(--mute);margin-bottom:.4rem;}
-.se-body{font-size:12px;color:var(--pale);line-height:1.7;font-style:italic;}
-.se-body strong{color:var(--white);font-style:normal;}
-
-/* ══ PULLQUOTE ══ */
-.pullquote{border-left:2px solid var(--gold);padding:.5rem 1.5rem;margin:1.5rem 0;font-family:var(--serif);font-size:clamp(1rem,2.2vw,1.3rem);font-style:italic;color:var(--white);line-height:1.55;}
-.pullquote cite{display:block;font-family:var(--mono);font-size:10px;font-style:normal;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);margin-top:.75rem;}
-
-/* ══ SCALABILITY SECTION ══ */
-.scale-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1.5rem 0;}
-@media(max-width:800px){.scale-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:480px){.scale-grid{grid-template-columns:1fr;}}
-.sc-card{border:1px solid var(--line);border-radius:8px;background:var(--dark);padding:1.1rem 1rem;transition:all .2s;}
-.sc-card:hover{background:var(--mid);transform:translateY(-2px);}
-.sc-icon{font-size:1.4rem;margin-bottom:.5rem;}
-.sc-title{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--pale);margin-bottom:.35rem;}
-.sc-desc{font-size:11px;color:var(--mute);font-style:italic;line-height:1.55;}
-.sc-tag{font-family:var(--mono);font-size:9px;color:var(--gold);margin-top:.5rem;opacity:.7;}
-
-/* ══ FOOTER ══ */
-.site-footer{padding:1.5rem 10vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
-.footer-brand{font-family:var(--serif);font-size:1rem;color:var(--gold);font-style:italic;}
-.footer-note{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase;}
-
-/* ══ INVARIANT EQUATION ══ */
-.eq-strip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem;padding:1.5rem;border:1px solid var(--line);border-radius:10px;background:var(--dark);margin:1.5rem 0;}
-.eq-node{font-family:var(--serif);font-size:clamp(1rem,2.5vw,1.4rem);font-style:italic;padding:.35rem .75rem;border-radius:6px;border:1px solid;}
+/* ══ EIGEN ══ */
+.eq-strip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem;padding:1.25rem;border:1px solid var(--line);border-radius:10px;background:var(--dark);margin:1.25rem 0;}
+.eq-node{font-family:var(--serif);font-size:clamp(.9rem,2.2vw,1.3rem);font-style:italic;padding:.3rem .65rem;border-radius:5px;border:1px solid;}
 .eq-node[data-n="1"]{color:var(--c1);border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08);}
 .eq-node[data-n="2"]{color:var(--c2);border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.08);}
 .eq-node[data-n="3"]{color:var(--c3);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08);}
 .eq-node[data-n="4"]{color:var(--c4);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08);}
 .eq-node[data-n="5"]{color:var(--c5);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);}
-.eq-arrow{color:var(--mute);font-size:1.1rem;flex-shrink:0;}
+.eq-arrow{color:var(--mute);font-size:1rem;flex-shrink:0;}
+.eigen-box{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.25rem 0;}
+.eb-head{background:var(--dark);padding:1.1rem 1.6rem;border-bottom:1px solid var(--line);}
+.eb-eyebrow{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:var(--c4);margin-bottom:.45rem;}
+.eb-headline{font-family:var(--serif);font-size:clamp(1rem,2.2vw,1.5rem);font-weight:400;color:var(--white);line-height:1.25;}
+.eb-headline em{font-style:italic;color:var(--c4);}
+.eigen-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);}
+@media(max-width:600px){.eigen-grid{grid-template-columns:1fr;}}
+.eg-cell{background:var(--off);padding:1.1rem 1.35rem;}
+.eg-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:.45rem;}
+.eg-body{font-size:12px;color:var(--pale);line-height:1.7;font-style:italic;}
+.eg-body strong{color:var(--white);font-style:normal;}
+.eigen-oneliner{background:var(--mid);padding:1rem 2rem;border-top:1px solid var(--line);font-family:var(--serif);font-size:clamp(.9rem,1.8vw,1.15rem);font-style:italic;color:var(--gold2);text-align:center;line-height:1.5;}
+
+/* ══ SCALAR ══ */
+.scalar-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 2rem;border:1px solid var(--line);border-radius:12px;background:var(--dark);margin:1.25rem 0;text-align:center;position:relative;overflow:hidden;}
+.scalar-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(239,68,68,.06) 0%,transparent 70%);pointer-events:none;}
+.sh-eyebrow{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--mute);margin-bottom:.9rem;}
+.sh-number{font-family:var(--serif);font-size:clamp(4rem,12vw,8rem);line-height:1;color:var(--c5);margin-bottom:.4rem;transition:all .5s ease;}
+.sh-unit{font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:.2em;color:var(--mute);margin-bottom:1.25rem;}
+.sh-label{font-family:var(--body);font-size:clamp(.9rem,1.8vw,1rem);font-style:italic;color:var(--pale);max-width:44ch;line-height:1.7;}
+.sh-pulse{position:absolute;inset:0;border-radius:12px;animation:scalar-pulse 3s infinite;}
+@keyframes scalar-pulse{0%,100%{box-shadow:inset 0 0 0 0 rgba(239,68,68,.0);}50%{box-shadow:inset 0 0 0 3px rgba(239,68,68,.15);}}
+.scalar-explain{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:1.25rem 0;}
+@media(max-width:600px){.scalar-explain{grid-template-columns:1fr;}}
+.se-cell{background:var(--off);padding:1rem 1.3rem;}
+.se-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:var(--mute);margin-bottom:.35rem;}
+.se-body{font-size:12px;color:var(--pale);line-height:1.7;font-style:italic;}
+.se-body strong{color:var(--white);font-style:normal;}
+
+/* ══ PULLQUOTE ══ */
+.pullquote{border-left:2px solid var(--gold);padding:.5rem 1.4rem;margin:1.4rem 0;font-family:var(--serif);font-size:clamp(1rem,2vw,1.25rem);font-style:italic;color:var(--white);line-height:1.55;}
+.pullquote cite{display:block;font-family:var(--mono);font-size:10px;font-style:normal;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);margin-top:.65rem;}
+
+/* ══ SCALABILITY ══ */
+.scale-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:1.25rem 0;}
+@media(max-width:800px){.scale-grid{grid-template-columns:1fr 1fr;}}
+.sc-card{border:1px solid var(--line);border-radius:7px;background:var(--dark);padding:1rem;transition:all .18s;}
+.sc-card:hover{background:var(--mid);transform:translateY(-2px);}
+.sc-icon{font-size:1.3rem;margin-bottom:.45rem;}
+.sc-title{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--pale);margin-bottom:.3rem;}
+.sc-desc{font-size:11px;color:var(--mute);font-style:italic;line-height:1.5;}
+.sc-tag{font-family:var(--mono);font-size:9px;color:var(--gold);margin-top:.45rem;opacity:.7;}
+
+/* ══ FOOTER ══ */
+.site-footer{padding:1.4rem 10vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-brand{font-family:var(--serif);font-size:1rem;color:var(--gold);font-style:italic;}
+.footer-note{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase;}
 </style>
 </head>
 <body>
 
-<!-- SPINE -->
 <div class="spine"><div class="spine-fill" id="spineFill"></div></div>
 
-<!-- NODE NAV -->
 <nav class="node-nav">
-  <div class="nn-dot" data-node="1" onclick="goTo('s1')" title="Tensor"><span class="nn-tip">① Tensor</span></div>
-  <div class="nn-dot" data-node="2" onclick="goTo('s2')" title="Compressor"><span class="nn-tip">② Compressor</span></div>
-  <div class="nn-dot" data-node="3" onclick="goTo('s3')" title="Vector"><span class="nn-tip">③ Vector</span></div>
-  <div class="nn-dot" data-node="4" onclick="goTo('s4')" title="Eigenstructure"><span class="nn-tip">④ Eigen</span></div>
-  <div class="nn-dot" data-node="5" onclick="goTo('s5')" title="Scalar"><span class="nn-tip">⑤ Scalar</span></div>
+  <div class="nn-dot" data-node="0" onclick="goTo('s0')"><span class="nn-tip">Title</span></div>
+  <div class="nn-dot" data-node="1" onclick="goTo('s1')"><span class="nn-tip">① Tensor · The Map</span></div>
+  <div class="nn-dot" data-node="2" onclick="goTo('s2')"><span class="nn-tip">② Compressor</span></div>
+  <div class="nn-dot" data-node="3" onclick="goTo('s3')"><span class="nn-tip">③ Vector</span></div>
+  <div class="nn-dot" data-node="4" onclick="goTo('s4')"><span class="nn-tip">④ Eigenstructure</span></div>
+  <div class="nn-dot" data-node="5" onclick="goTo('s5')"><span class="nn-tip">⑤ Scalar</span></div>
 </nav>
 
 <!-- ═══════════════════ TITLE ═══════════════════ -->
-<section class="slide slide-title" id="s0">
+<section class="slide slide-title" id="s0" data-node="0">
   <div class="eyebrow">Uganda Digital Twin · npa-04 · Ukubona LLC</div>
   <h1>The <em>Invariant.</em></h1>
   <p class="tagline">Five nodes. One chain. Every planning question Uganda will ever ask collapses through the same architecture — from a national tensor of 146 districts and a hundred indicators, to a single actionable number.</p>
 
-  <!-- THE CHAIN -->
   <div class="chain" id="titleChain">
     <div class="chain-node" data-n="1" onclick="goTo('s1')">
       <div class="cn-num">① Input</div>
@@ -289,7 +293,7 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
     <div class="chain-node" data-n="5" onclick="goTo('s5')">
       <div class="cn-num">⑤ Output</div>
       <div class="cn-name">Scalar</div>
-      <div class="cn-sub">KPI · the number they fuss about</div>
+      <div class="cn-sub">KPI · the number they act on</div>
     </div>
   </div>
 
@@ -302,82 +306,104 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   <div class="slide-ind">00</div>
 </section>
 
-<!-- ═══════════════════ SLIDE 1 · TENSOR ═══════════════════ -->
+<!-- ═══════════════════ SLIDE 1 · TENSOR + LIVE MAP ═══════════════════ -->
 <section class="slide" id="s1" data-node="1">
   <div class="node-pill" style="color:var(--c1);border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.07);">
     <span>①</span> Tensor · The Full Picture
   </div>
   <div class="slide-num">The raw data — before any question is asked</div>
   <h2>Uganda is a <em style="color:var(--c1)">tensor.</em></h2>
-  <p class="lead">146 districts. A hundred indicators. Measured across time. That is the tensor: a three-dimensional array — Districts × Indicators × Time — that holds the full complexity of Uganda without compressing or discarding anything. Every question the board ever asks is a slice of this tensor.</p>
+  <p class="lead">146 districts. A hundred indicators. Measured across time. Every question the board ever asks is a slice of this three-dimensional array. Select a programme below — the map recolours to show that slice.</p>
 
-  <div class="tensor-insight">
-    <div class="ti-label">The key insight · scalability</div>
-    <div class="ti-body">The tensor does not care what the indicators are. Health today. Revenue compliance tomorrow. Climate vulnerability next year. Parish Development Model uptake in 2028. <strong>The architecture is invariant to the content.</strong> Add a new indicator: add a column. Add a new time period: add a layer. The chain does not change.</div>
-  </div>
+  <!-- LIVE MAP SHELL -->
+  <div class="map-shell">
+    <div class="map-bar">
+      <div class="map-dots"><span></span><span></span><span></span></div>
+      <span class="map-url">ukubona-llc.github.io/npa-demo · 146 Districts</span>
+      <span class="map-tag">Uganda Digital Twin · Live</span>
+    </div>
 
-  <p style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:.75rem;">Select a programme slice — what question is the board asking?</p>
+    <!-- TENSOR DROPDOWN CONTROLS -->
+    <div class="tensor-controls">
+      <span class="tc-label">Tensor slice:</span>
+      <select class="tc-select" id="tensorSlice" onchange="tensorChange()">
+        <option value="hc">PIAP 1 · Human Capital Development — Health, Education, Nutrition</option>
+        <option value="ag">PIAP 2 · Agro-Industrialisation — Yield, Markets, Irrigation</option>
+        <option value="tw">PIAP 3 · Tourism, Wildlife &amp; Antiquities — Revenue, Conservation</option>
+        <option value="md">PIAP 4 · Mineral Development — Production, Royalties, Local Content</option>
+        <option value="mf">PIAP 5 · Manufacturing &amp; Trade — Industrial Output, SME Density</option>
+        <option value="in">PIAP 6 · Infrastructure &amp; Transport — Roads, Energy, ICT</option>
+        <option value="dt">PIAP 7 · Digital Transformation — Fiber, Mobile, e-Gov</option>
+        <option value="ps">PIAP 8 · Private Sector Development — FDI, Business Registration</option>
+        <option value="gv">PIAP 9 · Governance &amp; Security — CoC, Compliance, Safety</option>
+        <option value="cl">Cross-cutting · Climate Vulnerability — Flood, Drought, Land</option>
+        <option value="pd">Parish Development Model — Uptake, Disbursement, Absorption</option>
+      </select>
+      <div class="tc-dim">
+        <select id="dimSelect" onchange="dimChange()">
+          <option value="composite" selected>Composite L(θ)</option>
+          <option value="mh">Mental health</option>
+          <option value="mort">Mortality</option>
+          <option value="mal">Malnutrition</option>
+          <option value="so">Stockouts / access</option>
+        </select>
+      </div>
+      <span class="tc-shape" id="tcShape">146 × 23 × T</span>
+    </div>
 
-  <div class="tensor-grid" id="tensorGrid">
-    <div class="tg-cell selected" data-prog="human-capital" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 1</div>
-      <div class="tg-name">Human Capital Development</div>
-      <div class="tg-indicators">Health · Education · Nutrition · Water · Sanitation</div>
-      <div class="tg-dim">146 × 23 × T</div>
+    <!-- MAP + SIDE PANEL -->
+    <div class="map-body">
+      <div class="map-container">
+        <div id="leafmap"></div>
+        <div class="map-legend">
+          <div class="leg-title">L(θ) · ROYGBIV loss gradient</div>
+          <div class="leg-scale">
+            <div class="leg-sw" style="background:#e24b4a"></div>
+            <div class="leg-sw" style="background:#d85a30"></div>
+            <div class="leg-sw" style="background:#ef9f27"></div>
+            <div class="leg-sw" style="background:#639922"></div>
+            <div class="leg-sw" style="background:#378add"></div>
+            <div class="leg-sw" style="background:#534ab7"></div>
+            <div class="leg-sw" style="background:#1d9e75"></div>
+          </div>
+          <div class="leg-labs"><span>High loss · act</span><span>Optimised · replicate</span></div>
+        </div>
+      </div>
+      <div class="map-side" id="mapSide">
+        <div class="ms-section">
+          <div class="ms-label">National L(θ)</div>
+          <div class="ms-stat">
+            <div class="ms-stat-n" id="ms-mean" style="color:var(--r)">—</div>
+            <div class="ms-stat-lbl">Mean composite loss</div>
+          </div>
+          <div class="ms-stat">
+            <div class="ms-stat-n" style="color:var(--r)">+71%</div>
+            <div class="ms-stat-lbl">MH facility cases 2021→2024</div>
+          </div>
+        </div>
+        <div class="ms-section">
+          <div class="ms-label">Policy weights</div>
+          <div class="w-sl-row"><span class="w-sl-name">Mental health</span><input type="range" class="w-sl" id="ms-mh" min="5" max="50" value="35" oninput="weightsChanged()"><span class="w-sl-val" id="ms-mh-v">35%</span></div>
+          <div class="w-sl-row"><span class="w-sl-name">Mortality</span><input type="range" class="w-sl" id="ms-mort" min="5" max="50" value="25" oninput="weightsChanged()"><span class="w-sl-val" id="ms-mort-v">25%</span></div>
+          <div class="w-sl-row"><span class="w-sl-name">Malnutrition</span><input type="range" class="w-sl" id="ms-mal" min="5" max="50" value="25" oninput="weightsChanged()"><span class="w-sl-val" id="ms-mal-v">25%</span></div>
+          <div class="w-sl-row"><span class="w-sl-name">Access / stockouts</span><input type="range" class="w-sl" id="ms-so" min="5" max="40" value="15" oninput="weightsChanged()"><span class="w-sl-val" id="ms-so-v">15%</span></div>
+        </div>
+        <div class="ms-section">
+          <div class="ms-label">Highest loss</div>
+          <div class="top-districts" id="topDistricts"></div>
+        </div>
+      </div>
     </div>
-    <div class="tg-cell" data-prog="agri-food" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 2</div>
-      <div class="tg-name">Agro-Industrialisation</div>
-      <div class="tg-indicators">Yield · Market access · Value chains · Irrigation</div>
-      <div class="tg-dim">146 × 18 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="tourism-wildlife" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 3</div>
-      <div class="tg-name">Tourism, Wildlife &amp; Antiquities</div>
-      <div class="tg-indicators">Revenue · Visitor arrivals · Conservation · Heritage</div>
-      <div class="tg-dim">146 × 11 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="mineral-dev" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 4</div>
-      <div class="tg-name">Mineral Development</div>
-      <div class="tg-indicators">Production · Royalties · Local content · Environment</div>
-      <div class="tg-dim">146 × 14 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="manufacturing" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 5</div>
-      <div class="tg-name">Manufacturing &amp; Trade</div>
-      <div class="tg-indicators">Industrial output · Export share · SME density · Jobs</div>
-      <div class="tg-dim">146 × 16 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="infra" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 6</div>
-      <div class="tg-name">Infrastructure &amp; Transport</div>
-      <div class="tg-indicators">Roads · Energy · ICT backbone · Water transport</div>
-      <div class="tg-dim">146 × 21 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="digital" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 7</div>
-      <div class="tg-name">Digital Transformation</div>
-      <div class="tg-indicators">Fiber coverage · Mobile penetration · e-Gov uptake</div>
-      <div class="tg-dim">146 × 12 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="psd" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 8</div>
-      <div class="tg-name">Private Sector Development</div>
-      <div class="tg-indicators">Business registrations · FDI · MSME survival · Tax base</div>
-      <div class="tg-dim">146 × 15 × T</div>
-    </div>
-    <div class="tg-cell" data-prog="governance" onclick="selectTensor(this)">
-      <div class="tg-prog">PIAP Programme 9</div>
-      <div class="tg-name">Governance &amp; Security</div>
-      <div class="tg-indicators">Budget compliance · CoC · Service delivery · Safety</div>
-      <div class="tg-dim">146 × 19 × T</div>
+
+    <div class="map-foot">
+      <span class="mf-note"><span class="live-dot"></span> Synthetic Phase I · WHO priors + NPA surge data · Real WGS84 coords</span>
+      <span class="mf-update" id="mapUpdate">—</span>
     </div>
   </div>
 
   <div class="tensor-insight" id="tensorNote">
     <div class="ti-label">Active slice · Human Capital Development</div>
-    <div class="ti-body">Tensor shape: <strong>146 × 23 × T</strong>. 146 district rows. 23 health and education indicator columns. T time periods. The compressor will collapse this into a single colour per district — without discarding the 23 dimensions. <strong>That is the entire point.</strong></div>
+    <div class="ti-body">Tensor shape: <strong>146 × 23 × T</strong>. 146 district rows. 23 health and education indicator columns. T time periods. The compressor collapses this into a single colour per district. <strong>That is the entire point.</strong></div>
   </div>
 
   <div class="slide-ind">01 / 05</div>
@@ -390,12 +416,12 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   </div>
   <div class="slide-num">The board's priorities encoded as mathematics</div>
   <h2>The weights are a <em style="color:var(--c2)">political act.</em></h2>
-  <p class="lead">The compressor is a matrix: each row is a district, each column is an indicator, each cell is a weight. Multiply the tensor by the weight matrix and you get a score per district. The score is the colour on the map. The weights are what the board believes matters — and that belief, previously informal, is now visible, auditable, and arguable.</p>
+  <p class="lead">The compressor is a matrix: each row a district, each column an indicator, each cell a weight. Multiply the tensor by the weight matrix and you get a score per district. The weights are what the board believes matters — previously informal, now visible, auditable, and arguable.</p>
 
   <div class="weight-demo">
     <div class="wd-head">
       <span class="wd-title">Weight matrix · Human Capital slice</span>
-      <span class="wd-sub">Drag to set board priorities → map recolours</span>
+      <span class="wd-sub">Drag to set board priorities → scalar recomputes</span>
     </div>
     <div class="wd-body">
       <div class="w-row">
@@ -425,19 +451,19 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
       </div>
     </div>
     <div class="wd-foot">
-      <span class="wd-formula">L(θ) = <em>Σ αᵢwᵢθᵢ</em> &nbsp;·&nbsp; weights sum to 1 · ∇ recolours the map</span>
+      <span class="wd-formula">L(θ) = <em>Σ αᵢwᵢθᵢ</em> &nbsp;·&nbsp; weights sum to 1</span>
       <span class="wd-result" id="comp-result">—</span>
     </div>
   </div>
 
   <div class="roygbiv">
-    <div class="rv-seg" style="background:#c93b2a">Red</div>
-    <div class="rv-seg" style="background:#d4622a">Orange</div>
-    <div class="rv-seg" style="background:#c9a22a">Yellow</div>
-    <div class="rv-seg" style="background:#8ab83a">Lime</div>
-    <div class="rv-seg" style="background:#2a6b3a">Green</div>
-    <div class="rv-seg" style="background:#2a6b6b">Teal</div>
-    <div class="rv-seg" style="background:#2a4a8c">Blue</div>
+    <div class="rv-seg" style="background:#e24b4a">Red</div>
+    <div class="rv-seg" style="background:#d85a30">Orange</div>
+    <div class="rv-seg" style="background:#ef9f27">Yellow</div>
+    <div class="rv-seg" style="background:#639922">Lime</div>
+    <div class="rv-seg" style="background:#378add">Blue</div>
+    <div class="rv-seg" style="background:#534ab7">Indigo</div>
+    <div class="rv-seg" style="background:#1d9e75">Violet</div>
   </div>
 
   <div class="pullquote">
@@ -445,7 +471,6 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
     <em>The twin makes the weights visible, adjustable, and owned by Government.</em>
     <cite>— The compressor · Ukubona LLC</cite>
   </div>
-
   <div class="slide-ind">02 / 05</div>
 </section>
 
@@ -456,48 +481,27 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   </div>
   <div class="slide-num">The dropdown sets the optimisation parameter</div>
   <h2>Change the question.<br><em style="color:var(--c3)">The map answers.</em></h2>
-  <p class="lead">The vector is the direction the board points the compressor. It is the dropdown. Every new national priority — a new PIAP programme, a new Vision 2040 target, a new Certificate of Budget Compliance threshold — is a new vector. The engine does not change. The tensor does not change. Only the direction changes.</p>
+  <p class="lead">The vector is the direction the board points the compressor. Every new national priority — a new PIAP programme, a new Vision 2040 target, a new CoC threshold — is a new vector. The engine does not change. The tensor does not change. Only the direction changes.</p>
 
-  <div class="vector-demo">
-    <div class="vd-head">Vector selector · Select a programme — the simulated map responds</div>
-    <div class="vd-body">
-      <div class="vd-select-row">
-        <span class="vd-select-label">Board directive today:</span>
-        <select class="vd-select" id="vecSelect" onchange="vecUpdate()">
-          <option value="hc">Human Capital Development — health &amp; education</option>
-          <option value="ag">Agro-Industrialisation — yield &amp; markets</option>
-          <option value="dg">Digital Transformation — fiber &amp; connectivity</option>
-          <option value="gov">Governance — budget compliance &amp; CoC</option>
-          <option value="infra">Infrastructure — roads &amp; energy access</option>
-          <option value="psd">Private Sector — FDI &amp; business registration</option>
-          <option value="climate">Climate Vulnerability — flood &amp; drought risk</option>
-          <option value="pdm">Parish Development Model — uptake &amp; disbursement</option>
-        </select>
-      </div>
-      <div class="vd-map-sim" id="vecMapSim">
-        <span class="vd-map-label">146 Districts · Simulated</span>
-      </div>
-      <div class="vd-note" id="vecNote">Loading vector…</div>
-    </div>
-  </div>
-
-  <p style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);margin:1.5rem 0 .75rem;">NPA's live programme vectors — each is a dropdown item</p>
+  <p style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);margin-bottom:.65rem;">NPA's live programme vectors — each is a dropdown item on the map above</p>
   <div class="piap-list" id="piapList">
-    <div class="piap-item active" onclick="setPiap(this,'hc')"><span class="piap-dot" style="background:#c93b2a"></span>Human Capital Development</div>
-    <div class="piap-item" onclick="setPiap(this,'ag')"><span class="piap-dot" style="background:#d4622a"></span>Agro-Industrialisation</div>
-    <div class="piap-item" onclick="setPiap(this,'dg')"><span class="piap-dot" style="background:#c9a22a"></span>Digital Transformation</div>
-    <div class="piap-item" onclick="setPiap(this,'gov')"><span class="piap-dot" style="background:#8ab83a"></span>Governance &amp; Security</div>
-    <div class="piap-item" onclick="setPiap(this,'infra')"><span class="piap-dot" style="background:#2a6b3a"></span>Infrastructure &amp; Transport</div>
-    <div class="piap-item" onclick="setPiap(this,'psd')"><span class="piap-dot" style="background:#2a6b6b"></span>Private Sector Development</div>
-    <div class="piap-item" onclick="setPiap(this,'climate')"><span class="piap-dot" style="background:#2a4a8c"></span>Climate &amp; Environment</div>
-    <div class="piap-item" onclick="setPiap(this,'pdm')"><span class="piap-dot" style="background:#8b5cf6"></span>Parish Development Model</div>
+    <div class="piap-item active" onclick="setPiap(this,'hc')"><span class="piap-dot" style="background:#e24b4a"></span>Human Capital Development</div>
+    <div class="piap-item" onclick="setPiap(this,'ag')"><span class="piap-dot" style="background:#d85a30"></span>Agro-Industrialisation</div>
+    <div class="piap-item" onclick="setPiap(this,'dt')"><span class="piap-dot" style="background:#ef9f27"></span>Digital Transformation</div>
+    <div class="piap-item" onclick="setPiap(this,'gv')"><span class="piap-dot" style="background:#639922"></span>Governance &amp; Security</div>
+    <div class="piap-item" onclick="setPiap(this,'in')"><span class="piap-dot" style="background:#378add"></span>Infrastructure &amp; Transport</div>
+    <div class="piap-item" onclick="setPiap(this,'ps')"><span class="piap-dot" style="background:#534ab7"></span>Private Sector Development</div>
+    <div class="piap-item" onclick="setPiap(this,'cl')"><span class="piap-dot" style="background:#1d9e75"></span>Climate &amp; Environment</div>
+    <div class="piap-item" onclick="setPiap(this,'pd')"><span class="piap-dot" style="background:#8b5cf6"></span>Parish Development Model</div>
+    <div class="piap-item" onclick="setPiap(this,'mf')"><span class="piap-dot" style="background:#c9a84c"></span>Manufacturing &amp; Trade</div>
+    <div class="piap-item" onclick="setPiap(this,'md')"><span class="piap-dot" style="background:#c93b2a"></span>Mineral Development</div>
+    <div class="piap-item" onclick="setPiap(this,'tw')"><span class="piap-dot" style="background:#2a6b6b"></span>Tourism, Wildlife &amp; Antiquities</div>
   </div>
 
   <div class="pullquote">
     The dropdown gets longer every year as Uganda's ambitions expand.<br>
     <em>The engine does not change. The tensor just gets deeper.</em>
   </div>
-
   <div class="slide-ind">03 / 05</div>
 </section>
 
@@ -508,66 +512,65 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   </div>
   <div class="slide-num">What the compression reveals that the spreadsheet cannot</div>
   <h2>The dominant modes<br><em style="color:var(--c4)">were always there.</em></h2>
-  <p class="lead">When you compress a tensor through a weight matrix, you do not just get scores — you get structure. Districts cluster. Patterns emerge that no analyst spotted in the spreadsheet. Kampala and Arua both red, for different reasons. Karamoja blue on revenue compliance but red on health. These are eigenmodes of the planning problem — the natural groupings the data itself insists on.</p>
+  <p class="lead">When you compress a tensor through a weight matrix, you do not just get scores — you get structure. Districts cluster. Patterns emerge that no analyst spotted in the spreadsheet. These are eigenmodes of the planning problem — the natural groupings the data itself insists on.</p>
 
   <div class="eq-strip">
-    <span class="eq-node" data-n="1">T<sub style="font-size:.6em">d×i×t</sub></span>
+    <span class="eq-node" data-n="1">T<sub style="font-size:.55em">d×i×t</sub></span>
     <span class="eq-arrow">→</span>
-    <span class="eq-node" data-n="2">W<sub style="font-size:.6em">αᵢ</sub></span>
+    <span class="eq-node" data-n="2">W<sub style="font-size:.55em">αᵢ</sub></span>
     <span class="eq-arrow">→</span>
-    <span class="eq-node" data-n="3">v<sub style="font-size:.6em">θ</sub></span>
+    <span class="eq-node" data-n="3">v<sub style="font-size:.55em">θ</sub></span>
     <span class="eq-arrow">→</span>
-    <span class="eq-node" data-n="4">Eig(Σ<sub style="font-size:.6em">d</sub>)</span>
+    <span class="eq-node" data-n="4">Eig(Σ<sub style="font-size:.55em">d</sub>)</span>
     <span class="eq-arrow">→</span>
-    <span class="eq-node" data-n="5">κ<sub style="font-size:.6em">nat</sub></span>
+    <span class="eq-node" data-n="5">κ<sub style="font-size:.55em">nat</sub></span>
   </div>
 
   <div class="eigen-box">
     <div class="eb-head">
       <div class="eb-eyebrow">Eigenstructure · NPA Planning Insight</div>
-      <div class="eb-headline">The map doesn't just show <em>where.</em><br>It shows <em>why the clusters form.</em></div>
+      <div class="eb-headline">The map doesn't just show <em>where.</em> It shows <em>why the clusters form.</em></div>
     </div>
     <div class="eigen-grid">
       <div class="eg-cell">
         <div class="eg-label">Mode 1 — Structural poverty</div>
-        <div class="eg-body">Northern and northeastern districts load together on workforce gap, stunting, and facility access. Not one programme failure — <strong>a systemic deficit that runs across all indicators simultaneously.</strong> The twin names it. The PDF just lists the numbers.</div>
+        <div class="eg-body">Northern and northeastern districts load together on workforce gap, stunting, and facility access. Not one programme failure — <strong>a systemic deficit that runs across all indicators simultaneously.</strong></div>
       </div>
       <div class="eg-cell">
         <div class="eg-label">Mode 2 — Urban complexity</div>
-        <div class="eg-body">Kampala, Wakiso, Mukono: high facility density but high mental health burden and youth unemployment. The eigenmode is urban compression — <strong>resources present, outcomes degraded.</strong> A different intervention signature entirely.</div>
+        <div class="eg-body">Kampala, Wakiso, Mukono: high facility density but high mental health burden and youth unemployment. <strong>Resources present, outcomes degraded.</strong> A different intervention signature entirely.</div>
       </div>
       <div class="eg-cell">
         <div class="eg-label">Mode 3 — Revenue compliance</div>
-        <div class="eg-body">Western region districts cluster on budget compliance (CoC) performance — <strong>they are Uganda's planning model.</strong> The eigenmode surfaces them as the replication target before any analyst writes a report.</div>
+        <div class="eg-body">Western region districts cluster on CoC performance — <strong>they are Uganda's planning model.</strong> The eigenmode surfaces them as the replication target before any analyst writes a report.</div>
       </div>
       <div class="eg-cell">
         <div class="eg-label">Mode 4 — Climate exposure</div>
-        <div class="eg-body">Eastern flood-prone districts and northern drought-prone districts form a composite climate vulnerability mode that <strong>predicts health burden, agricultural failure, and fiscal stress simultaneously.</strong> The upstream signal the annual PDF never shows.</div>
+        <div class="eg-body">Eastern flood-prone and northern drought-prone districts form a composite vulnerability mode that <strong>predicts health burden, agricultural failure, and fiscal stress simultaneously.</strong></div>
       </div>
     </div>
     <div class="eigen-oneliner">
       <em>"The eigenstructure is Uganda showing you its skeleton. The map is just the skin."</em>
     </div>
   </div>
-
   <div class="slide-ind">04 / 05</div>
 </section>
 
 <!-- ═══════════════════ SLIDE 5 · SCALAR ═══════════════════ -->
 <section class="slide" id="s5" data-node="5">
   <div class="node-pill" style="color:var(--c5);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.07);">
-    <span>⑤</span> Scalar · The Number They Fuss About
+    <span>⑤</span> Scalar · The Number They Act On
   </div>
   <div class="slide-num">Everything collapses to one number — and that is the point</div>
   <h2>One answer.<br><em style="color:var(--c5)">Endlessly recomputable.</em></h2>
-  <p class="lead">The scalar is what Ministers argue over at the budget table. The KPI. The headline. The number in the speech. The certificate. The scalar is the final compression — tensor through compressor through vector through eigenstructure, collapsed to a single national performance index. But unlike the PDF's static number, this one recomputes every time a weight shifts, every time a district submits, every time the board asks a new question.</p>
+  <p class="lead">The scalar is what Ministers argue over at the budget table. The KPI. The headline. The certificate. But unlike the PDF's static number, this one recomputes every time a weight shifts, every time a district submits, every time the board asks a new question.</p>
 
   <div class="scalar-hero">
     <div class="sh-pulse"></div>
     <div class="sh-eyebrow">National Development Performance Index · Live</div>
     <div class="sh-number" id="scalarNum">—</div>
     <div class="sh-unit" id="scalarUnit">Composite · All Programmes · 146 Districts</div>
-    <div class="sh-label" id="scalarLabel">Adjust the weights on slide ② or change the vector on slide ③ and this number moves. That is what it means to own the scalar.</div>
+    <div class="sh-label">Adjust the weights on slide ② — this number moves. That is what it means to own the scalar.</div>
   </div>
 
   <div class="scalar-explain">
@@ -581,7 +584,7 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
     </div>
     <div class="se-cell">
       <div class="se-label">Why it matters for CoC</div>
-      <div class="se-body">The Certificate of Budget Compliance currently checks alignment against static targets. <strong>The scalar makes the target dynamic</strong> — it reflects reprioritised weights in real time, not last year's assumptions.</div>
+      <div class="se-body">The Certificate of Budget Compliance checks alignment against static targets. <strong>The scalar makes the target dynamic</strong> — it reflects reprioritised weights in real time, not last year's assumptions.</div>
     </div>
     <div class="se-cell">
       <div class="se-label">The invariant</div>
@@ -590,14 +593,10 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   </div>
 
   <div class="pullquote">
-    Vision 2040 sets the scalar target.<br>
-    NDPIV sets the weights.<br>
-    The PIAP programmes are the vectors.<br>
-    The 146 districts are the tensor.<br>
+    Vision 2040 sets the scalar target. NDPIV sets the weights. The PIAP programmes are the vectors. The 146 districts are the tensor.<br>
     <em>Ukubona is the compressor. Government owns the output.</em>
     <cite>— The invariant · npa-04 · Ukubona LLC</cite>
   </div>
-
   <div class="slide-ind">05 / 05</div>
 </section>
 
@@ -608,64 +607,20 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   <p class="lead">The architecture was built for health indicators because that was the first question. But the tensor does not care what the indicators are. The compressor does not care what the weights measure. The scalar does not care what the KPI is named. This is the fifty-year argument.</p>
 
   <div class="scale-grid">
-    <div class="sc-card">
-      <div class="sc-icon">🏥</div>
-      <div class="sc-title">Health &amp; Population</div>
-      <div class="sc-desc">Mental health, maternal mortality, facility access, workforce gaps, stunting. SUPRE 2025 data. Already live.</div>
-      <div class="sc-tag">Active · npa-03</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">🌾</div>
-      <div class="sc-title">Agriculture</div>
-      <div class="sc-desc">District yield stress, irrigation coverage, market access, Parish Development Model uptake per sub-county.</div>
-      <div class="sc-tag">Next slice</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">📡</div>
-      <div class="sc-title">Digital Transformation</div>
-      <div class="sc-desc">National backbone fiber coverage, mobile penetration, e-government uptake. Vincent's indicator: electricity upstream.</div>
-      <div class="sc-tag">PIAP Programme 7</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">📋</div>
-      <div class="sc-title">Budget Compliance</div>
-      <div class="sc-desc">Certificate of Compliance scores, MTEF alignment, PIP execution rates — live per district, not annual PDF.</div>
-      <div class="sc-tag">CoC · PIAP link</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">⚡</div>
-      <div class="sc-title">Energy &amp; Infrastructure</div>
-      <div class="sc-desc">Electrification rates, road condition index, National Backbone Infrastructure reach per district.</div>
-      <div class="sc-tag">PIAP Programme 6</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">🌍</div>
-      <div class="sc-title">Climate &amp; Environment</div>
-      <div class="sc-desc">Flood exposure, drought probability, land degradation — the upstream signal for everything else in the tensor.</div>
-      <div class="sc-tag">Cross-cutting</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">🏛️</div>
-      <div class="sc-title">Governance</div>
-      <div class="sc-desc">Service delivery scores, public safety, anti-corruption indices — the eigenmode that predicts everything else.</div>
-      <div class="sc-tag">PIAP Programme 9</div>
-    </div>
-    <div class="sc-card">
-      <div class="sc-icon">🌐</div>
-      <div class="sc-title">East Africa · 2040</div>
-      <div class="sc-desc">Uganda proves the architecture. The tensor expands to Kenya, Tanzania, Rwanda. NPA becomes the continental model.</div>
-      <div class="sc-tag">Vision 2040</div>
-    </div>
+    <div class="sc-card"><div class="sc-icon">🏥</div><div class="sc-title">Health &amp; Population</div><div class="sc-desc">Mental health, maternal mortality, facility access. SUPRE 2025. Already live.</div><div class="sc-tag">Active · npa-03</div></div>
+    <div class="sc-card"><div class="sc-icon">🌾</div><div class="sc-title">Agriculture</div><div class="sc-desc">Yield stress, irrigation, market access, Parish Development Model uptake.</div><div class="sc-tag">Next slice</div></div>
+    <div class="sc-card"><div class="sc-icon">📡</div><div class="sc-title">Digital Transformation</div><div class="sc-desc">National fiber coverage, mobile penetration, e-government uptake.</div><div class="sc-tag">PIAP Programme 7</div></div>
+    <div class="sc-card"><div class="sc-icon">📋</div><div class="sc-title">Budget Compliance</div><div class="sc-desc">CoC scores, MTEF alignment, PIP execution rates — live, not annual PDF.</div><div class="sc-tag">CoC · PIAP link</div></div>
+    <div class="sc-card"><div class="sc-icon">⚡</div><div class="sc-title">Energy &amp; Infrastructure</div><div class="sc-desc">Electrification rates, road condition index, NBI reach per district.</div><div class="sc-tag">PIAP Programme 6</div></div>
+    <div class="sc-card"><div class="sc-icon">🌍</div><div class="sc-title">Climate &amp; Environment</div><div class="sc-desc">Flood exposure, drought probability, land degradation — the upstream signal.</div><div class="sc-tag">Cross-cutting</div></div>
+    <div class="sc-card"><div class="sc-icon">🏛️</div><div class="sc-title">Governance</div><div class="sc-desc">Service delivery scores, anti-corruption indices — the eigenmode that predicts everything else.</div><div class="sc-tag">PIAP Programme 9</div></div>
+    <div class="sc-card"><div class="sc-icon">🌐</div><div class="sc-title">East Africa · 2040</div><div class="sc-desc">Uganda proves the architecture. NPA becomes the continental model.</div><div class="sc-tag">Vision 2040</div></div>
   </div>
 
   <div class="tensor-insight" style="border-left-color:var(--gold);">
     <div class="ti-label" style="color:var(--gold)">The invariant · stated formally</div>
-    <div class="ti-body">
-      The chain <strong>T → W → v → Eig → κ</strong> is the same for health, agriculture, revenue, climate, and governance. The only thing that changes is the slice of the tensor and the content of the weight matrix. Everything else — the map, the ROYGBIV, the district officers' API tokens, the data sovereignty architecture, the scalar at the end — is invariant. <strong>That is what makes this a 50-year platform and not a dashboard.</strong>
-    </div>
+    <div class="ti-body">The chain <strong>T → W → v → Eig → κ</strong> is the same for health, agriculture, revenue, climate, and governance. The only thing that changes is the slice of the tensor and the content of the weight matrix. Everything else — the map, the ROYGBIV, the district officers' API tokens, the data sovereignty architecture, the scalar — is invariant. <strong>That is what makes this a 50-year platform and not a dashboard.</strong></div>
   </div>
-
-  <div class="slide-ind">06 / 06</div>
 </section>
 
 <footer class="site-footer">
@@ -674,142 +629,295 @@ body{font-family:var(--body);background:var(--black);color:var(--white);line-hei
   <span class="footer-note">Kampala · 2026</span>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <script>
-// ── SPINE PROGRESS ──
-window.addEventListener('scroll', function() {
-  var h = document.documentElement.scrollHeight - window.innerHeight;
-  var pct = h > 0 ? (window.scrollY / h) * 100 : 0;
-  document.getElementById('spineFill').style.height = pct + '%';
-  // active nav dot
-  var slides = document.querySelectorAll('.slide[data-node]');
-  var dots = document.querySelectorAll('.nn-dot');
-  dots.forEach(function(d){d.classList.remove('active');});
-  slides.forEach(function(s){
-    var rect = s.getBoundingClientRect();
-    if(rect.top <= window.innerHeight*0.5 && rect.bottom >= window.innerHeight*0.5){
-      var n = s.getAttribute('data-node');
-      var dot = document.querySelector('.nn-dot[data-node="'+n+'"]');
-      if(dot) dot.classList.add('active');
-    }
-  });
-});
+// ═══════════════════════════════════════
+// DISTRICT DATA (146 coords + synthetic indicators)
+// ═══════════════════════════════════════
+const COORDS=[
+  {n:"Abim",lat:3.00,lon:33.67},{n:"Adjumani",lat:3.38,lon:31.79},{n:"Agago",lat:2.98,lon:33.38},
+  {n:"Alebtong",lat:2.26,lon:33.35},{n:"Amolatar",lat:1.60,lon:32.80},{n:"Amudat",lat:1.95,lon:34.93},
+  {n:"Amuria",lat:2.03,lon:33.65},{n:"Amuru",lat:2.80,lon:31.92},{n:"Apac",lat:1.98,lon:32.54},
+  {n:"Arua",lat:3.02,lon:30.91},{n:"Budaka",lat:1.00,lon:33.94},{n:"Bududa",lat:1.00,lon:34.33},
+  {n:"Bugiri",lat:0.57,lon:33.75},{n:"Buhweju",lat:-0.70,lon:30.42},{n:"Buikwe",lat:0.33,lon:33.00},
+  {n:"Bukedea",lat:1.36,lon:34.00},{n:"Bukomansimbi",lat:-0.14,lon:31.60},{n:"Bukwo",lat:1.28,lon:34.73},
+  {n:"Bulambuli",lat:1.22,lon:34.38},{n:"Buliisa",lat:2.12,lon:31.41},{n:"Bundibugyo",lat:0.71,lon:30.07},
+  {n:"Bunyangabu",lat:-0.50,lon:30.18},{n:"Bushenyi",lat:-0.58,lon:30.18},{n:"Busia",lat:0.46,lon:34.09},
+  {n:"Butaleja",lat:0.90,lon:33.97},{n:"Butebo",lat:1.18,lon:34.05},{n:"Buvuma",lat:0.38,lon:33.22},
+  {n:"Buyende",lat:1.24,lon:33.12},{n:"Dokolo",lat:1.91,lon:33.17},{n:"Gomba",lat:-0.23,lon:31.68},
+  {n:"Gulu",lat:2.77,lon:32.30},{n:"Hoima",lat:1.43,lon:31.35},{n:"Ibanda",lat:-0.14,lon:30.50},
+  {n:"Iganga",lat:0.61,lon:33.48},{n:"Isingiro",lat:-0.84,lon:30.82},{n:"Jinja",lat:0.42,lon:33.20},
+  {n:"Kaabong",lat:3.52,lon:34.14},{n:"Kabale",lat:-1.25,lon:29.99},{n:"Kabarole",lat:0.65,lon:30.25},
+  {n:"Kaberamaido",lat:1.74,lon:33.16},{n:"Kagadi",lat:0.94,lon:30.82},{n:"Kakumiro",lat:0.78,lon:31.33},
+  {n:"Kalaki",lat:1.89,lon:33.38},{n:"Kalangala",lat:-0.32,lon:32.23},{n:"Kaliro",lat:1.04,lon:33.50},
+  {n:"Kalungu",lat:-0.10,lon:31.78},{n:"Kampala",lat:0.32,lon:32.58},{n:"Kamuli",lat:0.95,lon:33.12},
+  {n:"Kamwenge",lat:0.19,lon:30.45},{n:"Kanungu",lat:-0.96,lon:29.79},{n:"Kapchorwa",lat:1.40,lon:34.45},
+  {n:"Kapelebyong",lat:1.90,lon:33.98},{n:"Karenga",lat:3.73,lon:33.80},{n:"Kasanda",lat:0.60,lon:31.72},
+  {n:"Kasese",lat:0.18,lon:30.08},{n:"Katakwi",lat:1.90,lon:34.07},{n:"Kayunga",lat:0.71,lon:32.87},
+  {n:"Kazo",lat:-0.10,lon:30.68},{n:"Kibale",lat:0.87,lon:31.06},{n:"Kiboga",lat:0.91,lon:31.77},
+  {n:"Kibuku",lat:1.04,lon:33.79},{n:"Kikuube",lat:1.58,lon:31.22},{n:"Kiruhura",lat:-0.20,lon:30.86},
+  {n:"Kiryandongo",lat:1.88,lon:32.10},{n:"Kisoro",lat:-1.28,lon:29.65},{n:"Kitgum",lat:3.28,lon:32.89},
+  {n:"Koboko",lat:3.41,lon:31.05},{n:"Kole",lat:2.37,lon:32.76},{n:"Kotido",lat:2.98,lon:34.13},
+  {n:"Kumi",lat:1.46,lon:33.94},{n:"Kwania",lat:2.12,lon:32.60},{n:"Kween",lat:1.42,lon:34.63},
+  {n:"Kyankwanzi",lat:1.09,lon:31.71},{n:"Kyegegwa",lat:0.48,lon:31.05},{n:"Kyenjojo",lat:0.62,lon:30.64},
+  {n:"Kyotera",lat:-0.65,lon:31.55},{n:"Lamwo",lat:3.53,lon:32.53},{n:"Lira",lat:2.25,lon:32.90},
+  {n:"Luuka",lat:0.73,lon:33.30},{n:"Luwero",lat:0.85,lon:32.47},{n:"Lwengo",lat:-0.40,lon:31.40},
+  {n:"Lyantonde",lat:-0.40,lon:31.15},{n:"Madi-Okollo",lat:3.10,lon:31.20},{n:"Manafwa",lat:0.88,lon:34.28},
+  {n:"Maracha",lat:3.29,lon:30.96},{n:"Masaka",lat:-0.34,lon:31.74},{n:"Masindi",lat:1.68,lon:31.71},
+  {n:"Mayuge",lat:0.46,lon:33.57},{n:"Mbale",lat:1.08,lon:34.18},{n:"Mbarara",lat:-0.60,lon:30.65},
+  {n:"Mitooma",lat:-0.63,lon:30.02},{n:"Mityana",lat:0.40,lon:32.02},{n:"Moroto",lat:2.53,lon:34.67},
+  {n:"Moyo",lat:3.65,lon:31.73},{n:"Mpigi",lat:0.23,lon:32.32},{n:"Mubende",lat:0.57,lon:31.36},
+  {n:"Mukono",lat:0.35,lon:32.76},{n:"Nabilatuk",lat:2.05,lon:34.53},{n:"Nakapiripirit",lat:1.90,lon:34.65},
+  {n:"Nakaseke",lat:1.12,lon:32.43},{n:"Nakasongola",lat:1.32,lon:32.45},{n:"Namayingo",lat:0.28,lon:33.92},
+  {n:"Namisindwa",lat:0.95,lon:34.42},{n:"Namutumba",lat:0.83,lon:33.68},{n:"Napak",lat:2.36,lon:34.24},
+  {n:"Nebbi",lat:2.48,lon:31.10},{n:"Ngora",lat:1.48,lon:33.77},{n:"Ntoroko",lat:1.03,lon:30.47},
+  {n:"Ntungamo",lat:-0.88,lon:30.27},{n:"Nwoya",lat:2.62,lon:31.95},{n:"Obongi",lat:3.52,lon:31.60},
+  {n:"Omoro",lat:2.62,lon:32.52},{n:"Otuke",lat:2.52,lon:33.45},{n:"Oyam",lat:2.26,lon:32.40},
+  {n:"Pader",lat:2.80,lon:33.20},{n:"Pakwach",lat:2.46,lon:31.49},{n:"Pallisa",lat:1.14,lon:33.71},
+  {n:"Rakai",lat:-0.73,lon:31.40},{n:"Rubanda",lat:-1.19,lon:29.84},{n:"Rubirizi",lat:-0.28,lon:30.10},
+  {n:"Rukiga",lat:-1.08,lon:29.95},{n:"Rukungiri",lat:-0.84,lon:29.94},{n:"Rwampara",lat:-0.68,lon:30.75},
+  {n:"Sembabule",lat:-0.07,lon:31.46},{n:"Serere",lat:1.50,lon:33.55},{n:"Sheema",lat:-0.56,lon:30.38},
+  {n:"Sironko",lat:1.23,lon:34.25},{n:"Soroti",lat:1.71,lon:33.61},{n:"Terego",lat:3.06,lon:30.80},
+  {n:"Tororo",lat:0.69,lon:34.18},{n:"Wakiso",lat:0.40,lon:32.45},{n:"Yumbe",lat:3.47,lon:31.25},
+  {n:"Zombo",lat:2.67,lon:30.90}
+];
 
-function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
-
-// ── TENSOR SELECTOR ──
-var tensorNotes = {
-  'human-capital':{label:'Human Capital Development',shape:'146 × 23 × T',note:'23 health and education indicator columns. The compressor will collapse this into a single colour per district. <strong>That is the entire point.</strong>'},
-  'agri-food':{label:'Agro-Industrialisation',shape:'146 × 18 × T',note:'18 agricultural and market indicators. District-level yield stress becomes visible before the harvest failure report is written.'},
-  'tourism-wildlife':{label:'Tourism, Wildlife & Antiquities',shape:'146 × 11 × T',note:'11 indicators. Visitor revenue and conservation pressure mapped together — the conflict is structural, not anecdotal.'},
-  'mineral-dev':{label:'Mineral Development',shape:'146 × 14 × T',note:'14 indicators. Royalty flows against local content and environmental compliance — the licence-to-operate score per district.'},
-  'manufacturing':{label:'Manufacturing & Trade',shape:'146 × 16 × T',note:'16 indicators. Industrial output density, export share, and SME survival per district — the value-chain geography of Uganda.'},
-  'infra':{label:'Infrastructure & Transport',shape:'146 × 21 × T',note:'21 indicators. Roads, energy, and ICT backbone — the precondition tensor for every other programme.'},
-  'digital':{label:'Digital Transformation',shape:'146 × 12 × T',note:'12 indicators. Fiber coverage is upstream of everything. Vincent's insight: electricity is upstream of fiber. The tensor holds both.'},
-  'psd':{label:'Private Sector Development',shape:'146 × 15 × T',note:'15 indicators. Business registration density and FDI per district — the economic geography the budget table guesses at.'},
-  'governance':{label:'Governance & Security',shape:'146 × 19 × T',note:'19 indicators. Budget compliance, Certificate of Compliance scores, and service delivery — the eigenmode that predicts all others.'}
+// Tensor slice profiles — modifier functions per programme
+// Returns per-district multiplier [mh, mort, mal, so]
+const SLICE_PROFILES = {
+  hc:  (d,i,s)=>{ const n=d.lat>2.5,k=d.lat>2.5&&d.lon>33.5,u=['Kampala','Wakiso','Mukono','Jinja'].includes(d.n);let b=[0,0,0,0];if(n)b[0]+=.20;if(k){b[0]+=.10;b[2]+=.12;}if(u){b[0]+=.18;b[1]+=.05;}return b; },
+  ag:  (d,i,s)=>{ const e=d.lon>33&&d.lat>0&&d.lat<2,n=d.lat>2.5;let b=[0,0,0,0];if(e){b[2]+=.22;b[3]+=.10;}if(n){b[2]+=.15;b[1]+=.08;}return b; },
+  tw:  (d,i,s)=>{ const w=d.lon<30.5,sw=d.lat<-0.5;let b=[0,0,0,0];if(!w&&!sw){b[0]+=.15;b[3]+=.10;}else{b[0]-=.05;}return b; },
+  md:  (d,i,s)=>{ const w=d.lon<30.5&&d.lat>0.2,r=[35,31,37,40].some(v=>Math.abs(d.lon-v)<0.5);let b=[0,0,0,0];if(w){b[1]+=.08;b[3]+=.12;}if(r){b[3]+=.15;}return b; },
+  mf:  (d,i,s)=>{ const c=Math.abs(d.lat-0.5)<0.8&&Math.abs(d.lon-32.5)<1.5;let b=[0,0,0,0];if(!c){b[0]+=.12;b[1]+=.05;}else{b[0]-=.08;} return b; },
+  in:  (d,i,s)=>{ const r=d.lat>2.2,e=d.lon>33.5;let b=[0,0,0,0];if(r){b[1]+=.15;b[2]+=.10;}if(e){b[3]+=.12;}return b; },
+  dt:  (d,i,s)=>{ const c=['Kampala','Wakiso','Mukono','Jinja','Mbale'].includes(d.n),n=d.lat>2.5;let b=[0,0,0,0];if(!c){b[0]+=.08;b[3]+=.18;}if(n){b[3]+=.12;}return b; },
+  ps:  (d,i,s)=>{ const c=Math.abs(d.lat-0.4)<1.2&&Math.abs(d.lon-31.8)<1.8;let b=[0,0,0,0];if(!c){b[0]+=.10;b[3]+=.15;}return b; },
+  gv:  (d,i,s)=>{ const w=d.lon<30.8,n=d.lat>2.5;let b=[0,0,0,0];if(w){b[0]-=.08;b[1]-=.05;}if(n){b[1]+=.12;b[3]+=.10;}return b; },
+  cl:  (d,i,s)=>{ const ef=d.lon>33&&d.lat>0,nd=d.lat>2&&d.lon<32.5;let b=[0,0,0,0];if(ef){b[0]+=.15;b[2]+=.18;}if(nd){b[2]+=.20;b[1]+=.10;}return b; },
+  pd:  (d,i,s)=>{ const c=Math.abs(d.lat-0.5)<1.5&&Math.abs(d.lon-32)<2;let b=[0,0,0,0];if(!c){b[3]+=.20;b[0]+=.08;}return b; },
 };
-function selectTensor(el){
-  document.querySelectorAll('.tg-cell').forEach(function(c){c.classList.remove('selected');});
-  el.classList.add('selected');
-  var prog = el.getAttribute('data-prog');
-  var d = tensorNotes[prog];
-  var note = document.getElementById('tensorNote');
-  note.querySelector('.ti-label').textContent = 'Active slice · ' + d.label;
-  note.querySelector('.ti-body').innerHTML = 'Tensor shape: <strong>' + d.shape + '</strong>. ' + d.note;
+
+const SLICE_META = {
+  hc:  {label:'Human Capital Development',  shape:'146 × 23 × T', note:'23 health and education indicators. The compressor collapses this into a single colour per district. <strong>That is the entire point.</strong>'},
+  ag:  {label:'Agro-Industrialisation',      shape:'146 × 18 × T', note:'18 agricultural indicators. District-level yield stress becomes visible before the harvest failure report is written.'},
+  tw:  {label:'Tourism, Wildlife & Antiquities', shape:'146 × 11 × T', note:'11 indicators. Visitor revenue and conservation pressure mapped together — the conflict is structural, not anecdotal.'},
+  md:  {label:'Mineral Development',         shape:'146 × 14 × T', note:'Royalty flows against local content and environmental compliance — the licence-to-operate score per district.'},
+  mf:  {label:'Manufacturing & Trade',       shape:'146 × 16 × T', note:'Industrial output density, export share, and SME survival per district — the value-chain geography of Uganda.'},
+  in:  {label:'Infrastructure & Transport',  shape:'146 × 21 × T', note:'Roads, energy, and ICT backbone — the precondition tensor for every other programme.'},
+  dt:  {label:'Digital Transformation',      shape:'146 × 12 × T', note:'Fiber coverage is upstream of everything. Electricity is upstream of fiber. The tensor holds both.'},
+  ps:  {label:'Private Sector Development',  shape:'146 × 15 × T', note:'Business registration density and FDI per district — the economic geography the budget table guesses at.'},
+  gv:  {label:'Governance & Security',       shape:'146 × 19 × T', note:'Budget compliance, Certificate of Compliance, and service delivery — the eigenmode that predicts all others.'},
+  cl:  {label:'Climate Vulnerability',       shape:'146 × 16 × T', note:'Flood exposure is upstream of health burden, agricultural failure, and fiscal stress — simultaneously.'},
+  pd:  {label:'Parish Development Model',    shape:'146 × 10 × T', note:'Disbursement uptake and absorption capacity per parish — sub-county granularity needed.'},
+};
+
+// Build synthetic dataset
+function buildDataset(sliceKey) {
+  return COORDS.map((d, i) => {
+    const s = i * 137.508 + 19.1;
+    const baseMH  = Math.min(1, Math.max(0, 0.15 + 0.28*Math.abs(Math.sin(s*0.7))));
+    const baseMort = Math.min(1, Math.max(0, 0.04 + 0.10*Math.abs(Math.sin(s*1.3))));
+    const baseMal  = Math.min(1, Math.max(0, 0.15 + 0.28*Math.abs(Math.sin(s*0.9))));
+    const baseSo   = Math.min(1, Math.max(0, 0.05 + 0.18*Math.abs(Math.sin(s*1.7))));
+    const prof = SLICE_PROFILES[sliceKey] ? SLICE_PROFILES[sliceKey](d, i, s) : [0,0,0,0];
+    const mh   = Math.min(1, Math.max(0, baseMH   + prof[0]));
+    const mort = Math.min(1, Math.max(0, baseMort + prof[1]));
+    const mal  = Math.min(1, Math.max(0, baseMal  + prof[2]));
+    const so   = Math.min(1, Math.max(0, baseSo   + prof[3]));
+    return {n:d.n, lat:d.lat, lon:d.lon, mh, mort, mal, so};
+  });
 }
 
-// ── COMPRESSOR ──
-function compUpdate(){
-  var mh = +document.getElementById('w-mh').value;
-  var mm = +document.getElementById('w-mm').value;
-  var wf = +document.getElementById('w-wf').value;
-  var sc = +document.getElementById('w-sc').value;
-  var st = +document.getElementById('w-st').value;
-  var T = mh+mm+wf+sc+st;
+// ═══ STATE ═══
+let dataset = [];
+let currentSlice = 'hc';
+let currentDim = 'composite';
+let leafMap, markers = [];
+
+// ═══ COLOUR ═══
+const ROYGBIV_COLS = ['#e24b4a','#d85a30','#ef9f27','#639922','#378add','#534ab7','#1d9e75'];
+function lossColor(l) {
+  if(l>=.78)return ROYGBIV_COLS[0];
+  if(l>=.58)return ROYGBIV_COLS[1];
+  if(l>=.40)return ROYGBIV_COLS[2];
+  if(l>=.24)return ROYGBIV_COLS[3];
+  if(l>=.12)return ROYGBIV_COLS[4];
+  if(l>=.05)return ROYGBIV_COLS[5];
+  return ROYGBIV_COLS[6];
+}
+
+// ═══ WEIGHTS ═══
+function getWeights() {
+  const mh   = +document.getElementById('ms-mh').value;
+  const mort = +document.getElementById('ms-mort').value;
+  const mal  = +document.getElementById('ms-mal').value;
+  const so   = +document.getElementById('ms-so').value;
+  const T = mh + mort + mal + so;
+  return {mh:mh/T, mort:mort/T, mal:mal/T, so:so/T};
+}
+
+function getDisplayLoss(d, w, dim) {
+  if(dim === 'composite') return w.mh*d.mh + w.mort*d.mort + w.mal*d.mal + w.so*d.so;
+  if(dim === 'mh')   return d.mh;
+  if(dim === 'mort') return d.mort;
+  if(dim === 'mal')  return d.mal;
+  return d.so;
+}
+
+// ═══ MAP INIT ═══
+function initMap() {
+  leafMap = L.map('leafmap', {center:[1.4,32.3],zoom:6,zoomControl:true});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19
+  }).addTo(leafMap);
+}
+
+// ═══ RENDER MARKERS ═══
+function renderMap() {
+  markers.forEach(m => leafMap.removeLayer(m));
+  markers = [];
+  const w = getWeights();
+  const scored = dataset.map(d => ({...d, dl: getDisplayLoss(d, w, currentDim)}));
+  const mean = scored.reduce((a,b)=>a+b.dl,0) / scored.length;
+
+  // Update mean stat
+  const meanEl = document.getElementById('ms-mean');
+  meanEl.textContent = (mean*100).toFixed(1)+'%';
+  meanEl.style.color = lossColor(mean);
+
+  // Update top districts
+  const sorted = [...scored].sort((a,b)=>b.dl-a.dl);
+  document.getElementById('topDistricts').innerHTML = sorted.slice(0,7).map(d=>`
+    <div class="td-item">
+      <div class="td-dot" style="background:${lossColor(d.dl)}"></div>
+      <span class="td-name">${d.n}</span>
+      <span class="td-val">${(d.dl*100).toFixed(1)}%</span>
+    </div>`).join('');
+
+  // Render markers
+  scored.forEach(d => {
+    const r = ['Kampala','Gulu','Mbarara','Mbale','Lira'].includes(d.n) ? 10 : 7;
+    const m = L.circleMarker([d.lat, d.lon], {
+      radius:r, fillColor:lossColor(d.dl), color:'rgba(255,255,255,.15)',
+      weight:1.2, opacity:1, fillOpacity:.85
+    }).addTo(leafMap);
+    m.bindPopup(`
+      <div class="lp-name">${d.n}</div>
+      <div class="lp-val" style="color:${lossColor(d.dl)}">${(d.dl*100).toFixed(1)}%</div>
+      <div class="lp-rows">
+        <div class="lp-row"><span>Mental health</span><span class="lp-rv" style="color:${lossColor(d.mh)}">${(d.mh*100).toFixed(1)}%</span></div>
+        <div class="lp-row"><span>Mortality</span><span class="lp-rv" style="color:${lossColor(d.mort)}">${(d.mort*100).toFixed(1)}%</span></div>
+        <div class="lp-row"><span>Malnutrition</span><span class="lp-rv" style="color:${lossColor(d.mal)}">${(d.mal*100).toFixed(1)}%</span></div>
+        <div class="lp-row"><span>Access / stockouts</span><span class="lp-rv" style="color:${lossColor(d.so)}">${(d.so*100).toFixed(1)}%</span></div>
+      </div>`);
+    markers.push(m);
+  });
+
+  // Update timestamp
+  document.getElementById('mapUpdate').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  updateScalar(mean);
+}
+
+// ═══ TENSOR CHANGE ═══
+const tcShapeMap = {hc:'146 × 23 × T',ag:'146 × 18 × T',tw:'146 × 11 × T',md:'146 × 14 × T',mf:'146 × 16 × T',in:'146 × 21 × T',dt:'146 × 12 × T',ps:'146 × 15 × T',gv:'146 × 19 × T',cl:'146 × 16 × T',pd:'146 × 10 × T'};
+
+function tensorChange() {
+  currentSlice = document.getElementById('tensorSlice').value;
+  dataset = buildDataset(currentSlice);
+  const meta = SLICE_META[currentSlice];
+  document.getElementById('tcShape').textContent = tcShapeMap[currentSlice] || '146 × ? × T';
+  const note = document.getElementById('tensorNote');
+  note.querySelector('.ti-label').textContent = 'Active slice · ' + meta.label;
+  note.querySelector('.ti-body').innerHTML = 'Tensor shape: <strong>' + meta.shape + '</strong>. ' + meta.note;
+  // sync piap list
+  document.querySelectorAll('.piap-item').forEach(el => {
+    const onclick = el.getAttribute('onclick') || '';
+    el.classList.toggle('active', onclick.includes("'"+currentSlice+"'"));
+  });
+  renderMap();
+}
+
+function dimChange() {
+  currentDim = document.getElementById('dimSelect').value;
+  renderMap();
+}
+
+function weightsChanged() {
+  const mh   = +document.getElementById('ms-mh').value;
+  const mort = +document.getElementById('ms-mort').value;
+  const mal  = +document.getElementById('ms-mal').value;
+  const so   = +document.getElementById('ms-so').value;
+  const T = mh + mort + mal + so;
+  document.getElementById('ms-mh-v').textContent   = Math.round(mh/T*100)+'%';
+  document.getElementById('ms-mort-v').textContent = Math.round(mort/T*100)+'%';
+  document.getElementById('ms-mal-v').textContent  = Math.round(mal/T*100)+'%';
+  document.getElementById('ms-so-v').textContent   = Math.round(so/T*100)+'%';
+  renderMap();
+}
+
+function setPiap(el, key) {
+  document.querySelectorAll('.piap-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tensorSlice').value = key;
+  tensorChange();
+  // Scroll back up to the map
+  document.getElementById('s1').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ COMPRESSOR SLIDE ═══
+function compUpdate() {
+  const mh = +document.getElementById('w-mh').value;
+  const mm = +document.getElementById('w-mm').value;
+  const wf = +document.getElementById('w-wf').value;
+  const sc = +document.getElementById('w-sc').value;
+  const st = +document.getElementById('w-st').value;
+  const T  = mh+mm+wf+sc+st;
   document.getElementById('w-mh-v').textContent = Math.round(mh/T*100)+'%';
   document.getElementById('w-mm-v').textContent = Math.round(mm/T*100)+'%';
   document.getElementById('w-wf-v').textContent = Math.round(wf/T*100)+'%';
   document.getElementById('w-sc-v').textContent = Math.round(sc/T*100)+'%';
   document.getElementById('w-st-v').textContent = Math.round(st/T*100)+'%';
-  var mhW = mh/T; var wfW = wf/T;
-  var composite = (0.42 + mhW*0.18 + wfW*0.15).toFixed(3);
+  const composite = (0.42 + (mh/T)*0.18 + (wf/T)*0.15).toFixed(3);
   document.getElementById('comp-result').textContent = 'L(θ) = '+composite;
   updateScalar(composite);
 }
-compUpdate();
 
-// ── SCALAR ──
-function updateScalar(v){
-  var pct = Math.round((1 - parseFloat(v)) * 100);
-  document.getElementById('scalarNum').textContent = pct;
+// ═══ SCALAR ═══
+function updateScalar(v) {
+  const val = parseFloat(v);
+  const pct = Math.round((1 - val) * 100);
+  const el = document.getElementById('scalarNum');
+  el.textContent = pct;
+  const col = pct > 65 ? 'var(--lgreen)' : pct > 50 ? 'var(--yellow)' : 'var(--c5)';
+  el.style.color = col;
   document.getElementById('scalarUnit').textContent = 'National Performance Index · 100 = Vision 2040 Target';
-  var col = pct > 65 ? 'var(--lgreen)' : pct > 50 ? 'var(--yellow)' : 'var(--c5)';
-  document.getElementById('scalarNum').style.color = col;
 }
 
-// ── VECTOR MAP SIMULATION ──
-var vecData = {
-  hc:   {note:'<span style="color:var(--c3)">Human Capital</span> · Northern &amp; eastern districts highest burden. Arua, Kotido, Kaabong deepest red. Western region teal. Kampala orange — urban compression.', palette:['#c93b2a','#c93b2a','#d4622a','#c9a22a','#2a6b3a','#2a6b6b','#c93b2a','#d4622a','#c9a22a','#2a4a8c','#d4622a','#c9a22a']},
-  ag:   {note:'<span style="color:var(--c3)">Agro-Industrialisation</span> · Eastern and central districts most stressed. Drought-prone north red. Central Valley teal-green. Bugisu yellow — potential unrealised.', palette:['#2a6b3a','#c9a22a','#c93b2a','#d4622a','#2a6b6b','#2a4a8c','#c9a22a','#2a6b3a','#c93b2a','#d4622a','#2a6b6b','#c9a22a']},
-  dg:   {note:'<span style="color:var(--c3)">Digital Transformation</span> · Kampala and central corridor blue. Northern and eastern districts red — last-mile fiber gap. Electricity the upstream constraint.', palette:['#2a4a8c','#2a6b6b','#c9a22a','#c93b2a','#c93b2a','#d4622a','#2a6b3a','#2a4a8c','#d4622a','#c93b2a','#c9a22a','#2a6b6b']},
-  gov:  {note:'<span style="color:var(--c3)">Governance</span> · Western districts lead on budget compliance (CoC). Northern districts red on service delivery. Central mixed — proximity to power creates noise.', palette:['#c9a22a','#2a6b3a','#2a6b6b','#2a4a8c','#c93b2a','#d4622a','#2a6b3a','#c9a22a','#2a6b6b','#2a4a8c','#c93b2a','#d4622a']},
-  infra:{note:'<span style="color:var(--c3)">Infrastructure</span> · Road quality and energy access correlated. Karamoja subregion red. Northern corridor improving. Central teal.', palette:['#d4622a','#c9a22a','#2a6b3a','#2a6b6b','#c93b2a','#c93b2a','#d4622a','#2a6b3a','#2a4a8c','#c9a22a','#2a6b6b','#2a6b3a']},
-  psd:  {note:'<span style="color:var(--c3)">Private Sector</span> · Business density concentrated in central and western. Northern and eastern districts red — regulatory distance and infrastructure gap.', palette:['#2a4a8c','#2a6b6b','#2a6b3a','#c9a22a','#c93b2a','#d4622a','#2a6b3a','#2a4a8c','#c9a22a','#c93b2a','#2a6b6b','#d4622a']},
-  climate:{note:'<span style="color:var(--c3)">Climate Vulnerability</span> · Flood-prone east red. Drought-prone north red. Equatorial south teal. Climate mode is the upstream predictor of every other scalar.', palette:['#c93b2a','#c93b2a','#d4622a','#c9a22a','#2a6b6b','#2a4a8c','#c93b2a','#d4622a','#c9a22a','#c93b2a','#d4622a','#2a6b3a']},
-  pdm:  {note:'<span style="color:var(--c3)">Parish Development Model</span> · Disbursement uptake strongest in central. Northern parishes red — absorption capacity gap. Sub-county granularity needed.', palette:['#2a6b3a','#c9a22a','#c93b2a','#d4622a','#2a6b6b','#2a4a8c','#c9a22a','#2a6b3a','#c93b2a','#d4622a','#2a6b6b','#c9a22a']}
-};
-
-function renderMap(key){
-  var sim = document.getElementById('vecMapSim');
-  // Clear old blobs
-  sim.querySelectorAll('.district-blob').forEach(function(b){b.remove();});
-  var d = vecData[key];
-  var palette = d.palette;
-  // Render 24 blobs scattered across the sim area
-  var positions = [
-    [8,10],[18,5],[28,8],[40,6],[52,4],[62,9],[72,7],[82,10],[92,12],
-    [5,28],[15,32],[25,28],[38,35],[50,30],[62,28],[75,32],[88,25],
-    [10,52],[22,55],[35,50],[48,58],[60,52],[72,55],[85,50],
-    [8,72],[20,75],[35,68],[50,72],[65,70],[80,75],[92,70],
-    [12,88],[28,85],[45,90],[60,87],[78,85],[90,88]
-  ];
-  positions.forEach(function(pos, i){
-    var blob = document.createElement('div');
-    blob.className = 'district-blob';
-    var size = 14 + Math.random()*10;
-    blob.style.cssText = [
-      'width:'+size+'px',
-      'height:'+size+'px',
-      'left:'+pos[0]+'%',
-      'top:'+pos[1]+'%',
-      'background:'+palette[i % palette.length],
-      'transform:translate(-50%,-50%)',
-      'transition:background .6s ease'
-    ].join(';');
-    sim.appendChild(blob);
+// ═══ SPINE ═══
+window.addEventListener('scroll', function() {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+  document.getElementById('spineFill').style.height = pct+'%';
+  document.querySelectorAll('.slide[data-node]').forEach(function(s) {
+    const rect = s.getBoundingClientRect();
+    if(rect.top <= window.innerHeight*0.5 && rect.bottom >= window.innerHeight*0.5) {
+      const n = s.getAttribute('data-node');
+      document.querySelectorAll('.nn-dot').forEach(d=>d.classList.remove('active'));
+      const dot = document.querySelector('.nn-dot[data-node="'+n+'"]');
+      if(dot) dot.classList.add('active');
+    }
   });
-  document.getElementById('vecNote').innerHTML = d.note + ' &nbsp;·&nbsp; Map recolours as vector changes.';
-}
+});
 
-function vecUpdate(){
-  var v = document.getElementById('vecSelect').value;
-  renderMap(v);
-  // sync piap list
-  document.querySelectorAll('.piap-item').forEach(function(el){
-    el.classList.toggle('active', el.getAttribute('onclick').includes("'"+v+"'"));
-  });
-}
+function goTo(id) { document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
 
-function setPiap(el, key){
-  document.querySelectorAll('.piap-item').forEach(function(i){i.classList.remove('active');});
-  el.classList.add('active');
-  document.getElementById('vecSelect').value = key;
-  renderMap(key);
-}
-
-// Init
-renderMap('hc');
+// ═══ BOOT ═══
+initMap();
+dataset = buildDataset('hc');
+renderMap();
 compUpdate();
+weightsChanged();
 </script>
 </body>
 </html>
